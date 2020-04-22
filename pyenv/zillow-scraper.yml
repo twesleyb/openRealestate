@@ -1,5 +1,6 @@
 name: zillow-scraper
 channels:
+  - anaconda
   - conda-forge
   - defaults
 dependencies:
@@ -15,6 +16,7 @@ dependencies:
   - chardet=3.0.4=py38h32f6830_1006
   - cryptography=2.8=py38h766eaa4_2
   - decorator=4.4.2=py_0
+  - icu=58.2=h211956c_0
   - idna=2.9=py_1
   - ipython=7.13.0=py38h32f6830_2
   - ipython_genutils=0.2.0=py_1
@@ -24,6 +26,9 @@ dependencies:
   - libgcc-ng=9.2.0=h24d8f2e_2
   - libgomp=9.2.0=h24d8f2e_2
   - libstdcxx-ng=9.2.0=hdf63c60_2
+  - libxml2=2.9.9=hea5a465_1
+  - libxslt=1.1.33=h7d1a2b0_0
+  - lxml=4.5.0=py38hefd8a0e_0
   - ncurses=6.1=hf484d3e_1002
   - openssl=1.1.1g=h516909a_0
   - parso=0.7.0=pyh9f0ad1d_0
@@ -40,6 +45,7 @@ dependencies:
   - python_abi=3.8=1_cp38
   - readline=8.0=hf8c457e_0
   - requests=2.23.0=pyh8c360ce_2
+  - selenium=3.141.0=py38h1e0a361_1001
   - setuptools=46.1.3=py38h32f6830_0
   - six=1.14.0=py_1
   - soupsieve=1.9.4=py38h32f6830_1
