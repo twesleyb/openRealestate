@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
+import re
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 import requests
 from torrequest import TorRequest
 
+from lxml import html
+
 ## Defaults:
-ZIP = 27514
 BASE_URL = "https://www.zillow.com/homes/{0}_rb/"
 TORPASS='16:84205A404D64FF5F60EB72627A012BB308919ACA14AB093C6F9379EAD7'
 HEADERS = {
@@ -22,9 +25,9 @@ HEADERS = {
         }
 
 def get_cookies(url):
-    ''' Get a websites cookies. '''
+    ''' Get a websites cookies with Selenium. '''
     ## Default parameters.
-    LOG_LEVEL = 3 # What does log level do?
+    LOG_LEVEL = 3
     CHROME_DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
     # Chrome options and path to chromedriver.
     chrome = CHROME_DRIVER 
@@ -35,10 +38,24 @@ def get_cookies(url):
     # Start headless chromedriver session.
     driver = webdriver.Chrome(chrome,options=chrome_options)
     driver.get(url)
-    # Get cookies.
     cookies = driver.get_cookies()
     return(cookies)
 # EOF
+
+def bake(cookie_dough):
+    ''' Clean-up a cookies.txt file generated from Chrome extension, 
+    and return a dictionary of key value pairs that is compatible with requests.
+    From: https://stackoverflow.com/questions/14742899/using-cookies-txt-file-with-python-requests
+    '''
+    cookies = {}
+    with open (cookie_dough, 'r') as fp:
+        for line in fp:
+            if not re.match(r'^\#', line):
+                lineFields = line.strip().split('\t')
+                if len(lineFields) == 7: 
+                    cookies[lineFields[5]] = lineFields[6]
+    return cookies
+#EOF
 
 def randomize_ip(HashedControlPassword):
     ''' Randomize IP addredss with tor.
@@ -55,86 +72,59 @@ def randomize_ip(HashedControlPassword):
     return(ip)
 # EOF
 
+def scrape(url):
+    ## Default parameters.
+    DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
+    # Create webdriver.
+    # Options allow us to pass undetected by reCaptcha.
+    # https://stackoverflow.com/questions/53039551/selenium-webdriver-modifying-navigator-webdriver-flag-to-prevent-selenium-detec/53040904#53040904
+    options = webdriver.ChromeOptions() 
+    #options.add_argument("--headless")
+    options.add_argument('log-level=' + str(LOG_LEVEL))
+    options.add_argument("start-maximized")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    driver = webdriver.Chrome(options=options,executable_path=DRIVER)
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+      "source": """
+          Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined
+                        })
+            """
+            })
+    driver.execute_cdp_cmd("Network.enable", {})
+    driver.execute_cdp_cmd("Network.setExtraHTTPHeaders", {"headers": {"User-Agent": "browser1"}})
+    driver.get(url)
+    html = driver.page_source
+    return(html)
+#EOF
+
 # Order of opperations:
 # Randomize IP.
-# Get cookies.
-# Scrape.
+# Init webdriver
+# Do captcha.
+# Scrape html.
+# Store in dictionary.
 # Repeat.
-randomize_ip(TORPASS)
+data=list()
 
-url = BASE_URL.format(ZIP)
-cookies = get_cookies(url)
+zip_code = 27519
+ip = randomize_ip(TORPASS)
+print("IP address is set to: {}".format(ip))
+url = BASE_URL.format(zip_code)
+html = scrape(url)
+data.append(html)
 
-# Scraper:
-#def scraper(url,cookies,headers)
+# Write data to file.
+x = data[2]
+f = open('27519.txt','w')
+f.write(x)
+f.close()
 
-session = requests.Session()
-response = session.get(url,headers=HEADERS,cookies=cookies)
+# Get a list of zip codes.
+# FORMAT: {"zpid":"2080040202",
+y = x.split('{"zpid":')
 
-print(response.status_code)
-parser = html.fromstring(response.text)
-search_results = parser.xpath("//div[@id='search-results']//article")
 
-properties_list = []
-    # Loop: 
-    for properties in search_results:
-        raw_address = properties.xpath(".//span[@itemprop='address']//span[@itemprop='streetAddress']//text()")
-        raw_city = properties.xpath(".//span[@itemprop='address']//span[@itemprop='addressLocality']//text()")
-        raw_state= properties.xpath(".//span[@itemprop='address']//span[@itemprop='addressRegion']//text()")
-        raw_postal_code= properties.xpath(".//span[@itemprop='address']//span[@itemprop='postalCode']//text()")
-        raw_price = properties.xpath(".//span[@class='zsg-photo-card-price']//text()")
-        raw_info = properties.xpath(".//span[@class='zsg-photo-card-info']//text()")
-        raw_broker_name = properties.xpath(".//span[@class='zsg-photo-card-broker-name']//text()")
-        url = properties.xpath(".//a[contains(@class,'overlay-link')]/@href")
-        raw_title = properties.xpath(".//h4//text()")
-        # Extract key data. 
-        address = ' '.join(' '.join(raw_address).split()) if raw_address else None
-        city = ''.join(raw_city).strip() if raw_city else None
-        state = ''.join(raw_state).strip() if raw_state else None
-        postal_code = ''.join(raw_postal_code).strip() if raw_postal_code else None
-        price = ''.join(raw_price).strip() if raw_price else None
-        info = ' '.join(' '.join(raw_info).split()).replace(u"\xb7",',')
-        broker = ''.join(raw_broker_name).strip() if raw_broker_name else None
-        title = ''.join(raw_title) if raw_title else None
-        property_url = "https://www.zillow.com"+url[0] if url else None 
-        is_forsale = properties.xpath('.//span[@class="zsg-icon-for-sale"]')
-        properties = {
-                        'address':address,
-                        'city':city,
-                        'state':state,
-                        'postal_code':postal_code,
-                        'price':price,
-                        'facts and features':info,
-                        'real estate provider':broker,
-                        'url':property_url,
-                        'title':title
-        }
-        if is_forsale:
-            properties_list.append(properties)
-    return properties_list
-    # except:
-    #     print ("Failed to process the page",url)
+# Parse the html.
 
-if __name__=="__main__":
-argparser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-argparser.add_argument('zipcode',help = 'zipcode to be scraped')
-argparser.add_argument('cookies',help = 'cookie.txt file to be used.')
-sortorder_help = """
-available sort orders are :
-newest : Latest property details,
-cheapest : Properties with cheapest price
-"""
-argparser.add_argument('sort',nargs='?',help = sortorder_help,default ='Homes For You')
-args = argparser.parse_args()
-zipcode = args.zipcode
-cookies = bake(args.cookies)
-sort = args.sort
-print ("Fetching data for %s"%(zipcode))
-scraped_data = parse(zipcode,sort)
-print ("Writing data to output file")
-with open("properties-%s.csv"%(zipcode),'wb')as csvfile:
-    fieldnames = ['title','address','city','state','postal_code','price','facts and features','real estate provider','url']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    writer.writeheader()
-    for row in  scraped_data:
-        writer.writerow(row)

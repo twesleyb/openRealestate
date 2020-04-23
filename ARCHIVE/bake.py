@@ -17,3 +17,5 @@ def bake(cookie_dough):
                     cookie[lineFields[5]] = lineFields[6]
     return cookie
 #EOF
+
+cookies = bake("cookies.txt")
