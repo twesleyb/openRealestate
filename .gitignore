@@ -1,3 +1,6 @@
 # Files for git to ignore.
 *.swp
 *.swo
+
+# Ignore renv.
+renv/
