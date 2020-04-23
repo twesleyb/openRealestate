@@ -1,1 +1,2 @@
-# Downloaded with the Chrome extension: CRX.
+# Source code for Chrome extensions can be downloaded using the Chrome
+ CRX extension.
