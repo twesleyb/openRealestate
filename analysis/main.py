@@ -12,7 +12,7 @@ from lxml import html
 
 ## Defaults:
 BASE_URL = "https://www.zillow.com/homes/{0}_rb/"
-TORPASS='16:84205A404D64FF5F60EB72627A012BB308919ACA14AB093C6F9379EAD7'
+TORPASS=""
 HEADERS = {
         'authority' : 'https://www.zillow.com/',
         'accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
