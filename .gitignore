@@ -1,11 +1,15 @@
 # Files for git to ignore.
+#
+# Ignore temporary files.
 *.swp
 *.swo
-<<<<<<< HEAD
 
 # Ignore renv.
 renv/
-=======
+
+# Ignore sensitive files.
 .zwsid
 .torpass
->>>>>>> ac86b769b0531ea6b70b11ce6ee2aca9f87ff18c
+
+# Ignore my Rprofile.
+.Rprofile
