@@ -1,30 +1,33 @@
 #!/usr/bin/env python3
 
 import re
-
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
-import requests
-from torrequest import TorRequest
+import sys
 
 from lxml import html
 
-## Defaults:
-BASE_URL = "https://www.zillow.com/homes/{0}_rb/"
-TORPASS=""
-HEADERS = {
-        'authority' : 'https://www.zillow.com/',
-        'accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'accept-encoding':'gzip, deflate, sdch, br',
-        'accept-language':'en-GB,en;q=0.8,en-US;q=0.6,ml;q=0.4',
-        'referer': 'https://www.zillow.com/',
-        'cache-control':'max-age=10',
-        'upgrade-insecure-requests':'1',
-        'user-agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
-        }
+import re
+import subprocess
 
-def get_cookies(url):
+## Defaults:
+TORPASS="torpass"
+BASE_URL="https://www.zillow.com/"
+DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
+
+## Functions:
+def get_pass(key):
+    ''' Get password from password store. '''
+    # Requirements:
+    import re
+    import subprocess
+    cmd = ["pass",key]
+    process = subprocess.Popen(cmd,stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE)
+    output = process.communicate()
+    password = re.split(" |\n",list(output)[0].decode('utf-8'))[1]
+    return(password)
+# EOF
+
+def get_cookies(url,CHROME_DRIVER):
     ''' Get a websites cookies with Selenium. '''
     ## Default parameters.
     LOG_LEVEL = 3
@@ -57,34 +60,41 @@ def bake(cookie_dough):
     return cookies
 #EOF
 
-def randomize_ip(HashedControlPassword):
+def randomize_ip(password,quiet=False):
     ''' Randomize IP addredss with tor.
     Reset tor to randomize your IP address. Takes your tor hashed control
     password as an argument. Requires that you have set HashedControlPassword 
-    variable in the tor configuration file.'''
-    # Add hashed passwordexit()
-    tr=TorRequest(password=HashedControlPassword)
+    variable in the tor configuration file.
+    '''
+    # Requirements
+    import sys
+    from torrequest import TorRequest
+    # Add HashedControlPass.
+    tr=TorRequest(password=password)
     # Reset Tor.
     tr.reset_identity()
     # Check new ip.
     response = tr.get('http://ipecho.net/plain')
     ip = response.text
+    if not quiet:
+        print("IP address is set to: {}".format(ip),file=sys.stderr)
     return(ip)
 # EOF
 
-def scrape(url):
-    ## Default parameters.
-    DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
+def launch_bug(url,executable_path):
     # Create webdriver.
     # Options allow us to pass undetected by reCaptcha.
     # https://stackoverflow.com/questions/53039551/selenium-webdriver-modifying-navigator-webdriver-flag-to-prevent-selenium-detec/53040904#53040904
+    # Imports.
+    import sys
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+    # Create options to be passed to webdriver.
     options = webdriver.ChromeOptions() 
-    #options.add_argument("--headless")
-    options.add_argument('log-level=' + str(LOG_LEVEL))
     options.add_argument("start-maximized")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
-    driver = webdriver.Chrome(options=options,executable_path=DRIVER)
+    driver = webdriver.Chrome(options=options,executable_path=executable_path)
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
       "source": """
           Object.defineProperty(navigator, 'webdriver', {
@@ -95,9 +105,29 @@ def scrape(url):
     driver.execute_cdp_cmd("Network.enable", {})
     driver.execute_cdp_cmd("Network.setExtraHTTPHeaders", {"headers": {"User-Agent": "browser1"}})
     driver.get(url)
-    html = driver.page_source
-    return(html)
+    print("Launched chromium at {}".format(url),file=sys.stderr)
+    return driver
 #EOF
+
+def scrape_zillow(driver,zip_code):
+    url = "https://www.zillow.com/homes/{}_rb".format(zip_code)
+    driver.get(url)
+    html = driver.page_source
+    return(html, driver)
+#EOF
+
+# Get HashedControlPassword from password store.
+password = get_pass(TORPASS)
+
+# Randomize IP address.
+ip = randomize_ip(password)
+
+# Launch chromium bug.
+driver = launch_bug(url=BASE_URL,executable_path=DRIVER)
+
+# Scrape a page.
+zip_code = 10003
+html, driver = scrape_zillow(driver,zip_code)
 
 # Order of opperations:
 # Randomize IP.
@@ -109,8 +139,8 @@ def scrape(url):
 data=list()
 
 zip_code = 27519
-ip = randomize_ip(TORPASS)
-print("IP address is set to: {}".format(ip))
+
+
 url = BASE_URL.format(zip_code)
 html = scrape(url)
 data.append(html)
@@ -127,4 +157,5 @@ y = x.split('{"zpid":')
 
 
 # Parse the html.
+get_pass("torpass")
 
