@@ -23,8 +23,8 @@ from Py.randomize_ip import randomize_ip
 from Py.launch_bug import launch_bug
 
 # Example: how to reload a module.
-importlib.reload(Py.get_pass)
-from Py.get_pass import get_pass
+#importlib.reload(Py.get_pass)
+#from Py.get_pass import get_pass
 
 # Get HashedControlPassword from password store.
 password = get_pass(TORPASS)
@@ -37,6 +37,11 @@ print("Start tor in another terminal!",file=sys.stderr)
 
 # Randomize IP address.
 ip = randomize_ip(password)
+
+# Get tor session.
+
+session = tor_session(password)
+
 
 # Test: launch chromium bug.
 ipecho = 'http://ipecho.net/plain'
