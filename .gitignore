@@ -13,3 +13,7 @@ renv/
 
 # Ignore my Rprofile.
 .Rprofile
+
+# Ignore downloads and extensions.
+extensions/
+downloads/
