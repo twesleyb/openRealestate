@@ -1,0 +1,33 @@
+# HTTP Cookie File downloaded with cookies.txt by Genuinous @genuinous
+# This file can be used by wget, curl, aria2c and other standard compliant tools.
+# Usage Examples:
+#   1) wget -x --load-cookies cookies.txt "https://www.zillow.com/homes/98105_rb/"
+#   2) curl --cookie cookies.txt "https://www.zillow.com/homes/98105_rb/"
+#   3) aria2c --load-cookies cookies.txt "https://www.zillow.com/homes/98105_rb/"
+#
+.zillow.com	TRUE	/	FALSE	1898388331	zguid	23|%24be5c45b8-35a1-4f5c-87b2-ab5172984893
+.zillow.com	TRUE	/	FALSE	1619401372	zjs_anonymous_id	%22be5c45b8-35a1-4f5c-87b2-ab5172984893%22
+.zillow.com	TRUE	/	FALSE	1650916420	_ga	GA1.2.872965432.1582812336
+.zillow.com	TRUE	/	FALSE	1590588587	_gcl_au	1.1.1921122333.1582812587
+.zillow.com	TRUE	/	FALSE	1629468588	_pxvid	ca05dd7e-596a-11ea-936d-0242ac12000b
+.zillow.com	TRUE	/	FALSE	1743302527	ki_s	
+.www.zillow.com	TRUE	/	FALSE	253402257600	G_ENABLED_IDPS	google
+.zillow.com	TRUE	/	FALSE	1619401372	zjs_user_id	%22X1-ZU133uk91egotu1_34dhh%22
+.zillow.com	TRUE	/	FALSE	1903007254	loginmemento	1|f1c299a334a51c3822d3e537a633039ae3aabf610635ff059aac5c6b1f1f53ee
+.zillow.com	TRUE	/	FALSE	1903007254	userid	X|3|51e0001a3130c28a%7C1%7CwJWbk53CViJJ_OtDcqHeUf3FD7UBe0R9ANAmWF-DABU%3D
+.zillow.com	TRUE	/	FALSE	1745435425	ki_t	1585535739181%3B1587669025101%3B1587669025101%3B3%3B105
+.zillow.com	TRUE	/	FALSE	1745435425	ki_r	aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8%3D
+.zillow.com	TRUE	/	FALSE	1587930820	_gid	GA1.2.992331543.1587829794
+.zillow.com	TRUE	/	TRUE	1588088994	KruxPixel	true
+.zillow.com	TRUE	/	TRUE	1588089017	KruxAddition	true
+.zillow.com	TRUE	/	FALSE	0	zgsession	1|85e58e2a-72b8-471c-85e1-10a6cf69d0b7
+www.zillow.com	FALSE	/	FALSE	0	ZILLOW_SID	1|AAAAAVVbFRIBVVsVErzLcUzxM2JWPBaHHY7PFpGF5nkS88%2FQ2cANqKwgteWjt9Y%2BYK%2FAWgz%2Bn%2FdTl4N8I0VoUPNiIjOh
+www.zillow.com	FALSE	/	FALSE	0	JSESSIONID	780DFAC24F18BB53B7749CE7FB1DE0A9
+.zillow.com	TRUE	/	TRUE	0	DoubleClickSession	true
+www.zillow.com	FALSE	/	TRUE	1587846065	GASession	true
+.zillow.com	TRUE	/	FALSE	1587846078	_px3	f4f46c3d4abb4592daba8361249558f553b8c5331713600330159b9400d31129:IRLL56vYTF0f+6M2txcKToYrF3mSZ8oUfhgPfgmCOv9wC7xlrWm1FIfukG0CuJWg+xAqLkJMr4FVHARe1WvZcg==:1000:uPldxI9NEddEdm25U+j2h3fo8a2ipt4yT1c12c4A1ZiuF16mpkGYGXfza2doTUHPFa+jgEsCYaW3np8Wj6V0CD2nAkEehiLdFopEcy3r0xm9Me0QFxpyo1lfS9BlM0FkaoCcLe6kR8rR61KHy5R9fush7ltefQ0NqpRpo/maZRg=
+.zillow.com	TRUE	/	FALSE	1587844458	_gat	1
+.zillow.com	TRUE	/	FALSE	1903420421	search	6|1590436419255%7Crect%3D47.68882091838506%252C-122.22357504980424%252C47.63274662151846%252C-122.33922395019577%26rid%3D99565%26disp%3Dmap%26mdm%3Dauto%26p%3D1%26sort%3Ddays%26z%3D0%26pt%3Dpmf%252Cpf%26fs%3D1%26fr%3D0%26mmm%3D1%26rs%3D0%26ah%3D0%26singlestory%3D0%26housing-connector%3D0%26abo%3D0%26garage%3D0%26pool%3D0%26ac%3D0%26waterfront%3D0%26finished%3D0%26unfinished%3D0%26cityview%3D0%26mountainview%3D0%26parkview%3D0%26waterview%3D0%26hoadata%3D1%26zillow-owned%3D0%263dhome%3D0%09%0999565%09%09%09%09%09%09
+www.zillow.com	FALSE	/	FALSE	1588449223	AWSALB	qXcJpYk8v7/7KOAvgHWd85SDo1IMgFTIBp2QnY7cT3LXQpnCNfL7ktnrZ2+rBfx/iRP6vR2mm9dLIoBxQqRsrYglEiWyTjKiR/Bx3iP5Q/BgyJ0lRwFzEV8UvD+0
+www.zillow.com	FALSE	/	TRUE	1588449223	AWSALBCORS	qXcJpYk8v7/7KOAvgHWd85SDo1IMgFTIBp2QnY7cT3LXQpnCNfL7ktnrZ2+rBfx/iRP6vR2mm9dLIoBxQqRsrYglEiWyTjKiR/Bx3iP5Q/BgyJ0lRwFzEV8UvD+0
+.zillow.com	TRUE	/	FALSE	1587846223	_uetsid	_uetf29e5467-7ba4-7eda-215c-0ee6a4c4c0e5
