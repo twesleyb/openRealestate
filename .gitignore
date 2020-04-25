@@ -13,3 +13,13 @@ renv/
 
 # Ignore my Rprofile.
 .Rprofile
+
+# Ignore downloads and extensions.
+extensions/
+downloads/
+
+# Compiled python files.
+*.pyc
+
+# Log files.
+*.log

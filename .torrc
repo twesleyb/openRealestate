@@ -1,0 +1,13 @@
+# Tor configuration
+#ORPort 443
+ControlPort 9051
+ORPORT 9001
+#DirPort 80
+Exitpolicy reject *:*
+Nickname spider
+ContactInfo human@...
+PortForwarding 1
+#PortForwardingHelper [path-to]\tor-fw-helper.exe
+SOCKSPort 9050
+HashedControlPassword 16:84205A404D64FF5F60EB72627A012BB308919ACA14AB093C6F9379EAD7
+CookieAuthentication 1
