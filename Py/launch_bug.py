@@ -1,5 +1,5 @@
 def launch_bug(url,executable_path,headless=False):
-    # Create webdriver.
+    # Create a chrome webdriver.
     # Options allow us to pass undetected by reCaptcha.
     # https://stackoverflow.com/questions/53039551/selenium-webdriver-modifying-navigator-webdriver-flag-to-prevent-selenium-detec/53040904#53040904
     # Imports.
