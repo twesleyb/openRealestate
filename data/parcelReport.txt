@@ -1,0 +1,75 @@
+Durham, NC
+
+Tax Parcel Report
+
+Sunday, April 26, 2020
+
+Parcel Information
+PIN
+
+0842-17-22-0077
+
+Parcel ID
+
+161007
+
+Acreage
+
+0.21400000
+
+Land Use
+
+RES/ 1-FAMILY
+
+Deed Book
+
+002000
+
+Deed Page
+
+000689
+
+Plat Book
+
+000129
+
+Plat Page
+
+000148
+
+Subdivision
+
+MILAN WDS PH 4 SEC B
+
+Site Address
+
+1011 ESTELLE CT
+
+Owner Name
+
+OSTERGAARD STEPHEN
+M
+
+Owner Address
+
+1011 ESTELLE CT
+
+Land Value
+
+$36,420.00
+
+Building Value
+
+$163,964.00
+
+Total Value
+
+$200,384.00
+
+Sale Price
+
+$0.00
+
+DURHAM , NC 27704
+
+
