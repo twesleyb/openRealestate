@@ -1,13 +1,26 @@
-def launch_bug(url,executable_path,headless=False):
+def launch_bug(url,executable_path,downdir=None,headless=False):
     # Create a chrome webdriver.
-    # Options allow us to pass undetected by reCaptcha.
-    # https://stackoverflow.com/questions/53039551/selenium-webdriver-modifying-navigator-webdriver-flag-to-prevent-selenium-detec/53040904#53040904
+    # Chromium download options:
+    # https://stackoverflow.com/questions/46937319/how-to-use-chrome-webdriver-in-selenium-to-download-files-in-python
     # Imports.
+    import os
     import sys
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
+    # Parse defaults.
+    if downdir is None:
+        downdir = os.getcwd()
     # Create options to be passed to webdriver.
-    options = webdriver.ChromeOptions() 
+    options=webdriver.ChromeOptions()
+    # Download options.
+    options.add_experimental_option("prefs", {
+        'download.default_directory' : "downdir",
+        'profile.default_content_setting_values.automatic_downloads': 2,
+        'download.prompt_for_download': False,
+        'download.directory_upgrade': True,
+        'safebrowsing.enabled': True
+        })
+    # Headless options.
     if headless:
         options.add_argument('--headless')
         options.add_argument('log-level=3')
@@ -16,7 +29,7 @@ def launch_bug(url,executable_path,headless=False):
         options.add_argument("start-maximized")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-    # EIF
+    # Create driver.
     driver = webdriver.Chrome(options=options,executable_path=executable_path)
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
       "source": """
@@ -27,6 +40,7 @@ def launch_bug(url,executable_path,headless=False):
             })
     driver.execute_cdp_cmd("Network.enable", {})
     driver.execute_cdp_cmd("Network.setExtraHTTPHeaders", {"headers": {"User-Agent": "browser1"}})
+    # Get url
     driver.get(url)
     print("Launched chromium at: {}".format(url),file=sys.stderr)
     return driver
