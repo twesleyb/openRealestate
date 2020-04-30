@@ -8,9 +8,8 @@ import importlib
 from os.path import dirname
 
 ## Defaults:
-BASE_URL="https://www.zillow.com/"
-DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
 URL='http://maps2.roktech.net/durhamnc_gomaps4/'
+DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
 
 # Directories.
 here = os.getcwd()
@@ -39,7 +38,7 @@ def scrape_addr(driver,address,neighbors=True):
     # Search for parcels.
     drop_down = driver.find_element_by_name('Parcels')
     click(drop_down)
-    # Clear any existing text
+    # Clear any existing text.
     button = driver.find_element_by_id("btnQueryBuilderClear")
     click(button)
     # Build a query.  
@@ -73,24 +72,23 @@ def scrape_addr(driver,address,neighbors=True):
     n1 = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
     print("Added {} neighbors.".format(n1-n0),file=sys.stderr)
 
-    # Loop to collect supplement urls.
-    urls = []
-    for i in range(n1):
-        # Find report.
-        button = driver.find_element_by_id("report{}".format(i))
-        click(button) # Open's new tab.
+
+    def get_supplement(driver,number,data_type):
+        # Find parcel report or tax history by number.
+        button = driver.find_element_by_id("{}{}".format(data_type,number))
+        # Open report in a new tab.
+        click(button)
         zzz(5)
         # Switch to new tab and get its url.
         driver.switch_to.window(driver.window_handles[-1])
         zzz()
-        urls.append(driver.current_url)
+        url=driver.current_url)
         # Close the tab and switch back to main tab.
         driver.close()
         zzz(5)
         driver.switch_to.window(driver.window_handles[-1])
-        #el = driver.find_element_by_id("taxbill{}".format(i))
-        #button = el.find_element_by_tag_name('a')
-        #click(button)
+        return(url)
+    # EOF.
 
     # Reset.
     driver.refresh()
@@ -100,8 +98,6 @@ def scrape_addr(driver,address,neighbors=True):
     return results
 # EOF
 
-# Launch chromium bug.
-driver = launch_bug(URL,executable_path=DRIVER)
 
 # function to take care of downloading file
 def enable_download_headless(browser,download_dir):
@@ -112,7 +108,9 @@ def enable_download_headless(browser,download_dir):
     browser.execute("send_command", params)
 # EOF
 
-# Get an address.
+# Launch chromium bug.
+driver = launch_bug(URL,executable_path=DRIVER,headless=True)
+
 num = "1011"
 street = "ESTELLE CT"
 zip_code = "27704"
