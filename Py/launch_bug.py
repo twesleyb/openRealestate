@@ -1,12 +1,15 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
 def launch_bug(url,executable_path,downdir=None,headless=False):
+    ''' Launch webscraper. '''
     # Create a chrome webdriver.
     # Chromium download options:
     # https://stackoverflow.com/questions/46937319/how-to-use-chrome-webdriver-in-selenium-to-download-files-in-python
-    # Imports.
-    import os
-    import sys
-    from selenium import webdriver
-    from selenium.webdriver.chrome.options import Options
     # Parse defaults.
     downdir = r"C:/Users/User/downloads/test"
     # Create options to be passed to webdriver.
@@ -21,6 +24,7 @@ def launch_bug(url,executable_path,downdir=None,headless=False):
         })
     # Headless options.
     if headless:
+        options.add_argument('--window-size=1920,1080')  
         options.add_argument('--headless')
         options.add_argument('log-level=3')
         options.add_experimental_option('excludeSwitches',['enable-logging'])
