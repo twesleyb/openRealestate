@@ -8,13 +8,12 @@ def launch_bug(url,executable_path,downdir=None,headless=False):
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
     # Parse defaults.
-    if downdir is None:
-        downdir = os.getcwd()
+    downdir = r"C:/Users/User/downloads/test"
     # Create options to be passed to webdriver.
     options=webdriver.ChromeOptions()
     # Download options.
     options.add_experimental_option("prefs", {
-        'download.default_directory' : "downdir",
+        'download.default_directory' : downdir,
         'profile.default_content_setting_values.automatic_downloads': 2,
         'download.prompt_for_download': False,
         'download.directory_upgrade': True,

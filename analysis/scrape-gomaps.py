@@ -20,28 +20,19 @@ sys.path.append(root)
 # Load Functions in root/Py
 import Py
 from Py.launch_bug import launch_bug
+from Py.zzz import zzz
 
-# Launch chromium bug.
-driver = launch_bug(URL,executable_path=DRIVER)
-
-# Take a nap
-def zzz(tmin=1,tmax=1.5):
-    import random
-    from time import sleep
-    t=random.uniform(tmin,tmax)
-    sleep(t)
-#EOF
-
-# Click a button and sleep for a random duration.
+# Define a function that clicks a button and sleeps for a random duration.
 def click(button):
     button.click()
     zzz()
 #EOF
 
-
-# Scrape an addresses data.
+# Define a wrapper to catch errors.
 # FIXME: if any error, return None and reset.
+
 def scrape_addr(driver,address,neighbors=True):
+    ''' Scrape an addresses data from DurhamGOMaps.'''
     # Open the query builder.
     button = driver.find_element_by_id("queryBuilderNav")
     click(button)
@@ -66,7 +57,9 @@ def scrape_addr(driver,address,neighbors=True):
     # Response is pretty quick if you get a hit.
     # Collect the initial results.
     table = driver.find_element_by_id("tblSRNDetails")
-    n = num_results(driver)
+    # Initial numer of results:
+    n0 = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
+    print("Found {} result(s).".format(n0),file=sys.stderr)
     # Get neighbors?
     if neighbors:
         # Get adjacent properties and update table.
@@ -76,23 +69,57 @@ def scrape_addr(driver,address,neighbors=True):
         table = driver.find_element_by_id("tblSRNDetails")
     # Collect results from table.
     results = table.text.split("\n")
-    # This downloads the report.
-    #button = driver.find_element_by_id("report0")
-    #button.click()
+    # Numer of results after adding neighbors:
+    n1 = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
+    print("Added {} neighbors.".format(n1-n0),file=sys.stderr)
+
+    # Loop to collect supplement urls.
+    urls = []
+    for i in range(n1):
+        # Find report.
+        button = driver.find_element_by_id("report{}".format(i))
+        click(button) # Open's new tab.
+        zzz(5)
+        # Switch to new tab and get its url.
+        driver.switch_to.window(driver.window_handles[-1])
+        zzz()
+        urls.append(driver.current_url)
+        # Close the tab and switch back to main tab.
+        driver.close()
+        zzz(5)
+        driver.switch_to.window(driver.window_handles[-1])
+        #el = driver.find_element_by_id("taxbill{}".format(i))
+        #button = el.find_element_by_tag_name('a')
+        #click(button)
+
     # Reset.
     driver.refresh()
-    zzz()
     # Return the raw results.
+
+    print(urls)
     return results
 # EOF
 
-#Get an address.
+# Launch chromium bug.
+driver = launch_bug(URL,executable_path=DRIVER)
+
+# function to take care of downloading file
+def enable_download_headless(browser,download_dir):
+    browser.command_executor._commands["send_command"] = ("POST",
+            '/session/$sessionId/chromium/send_command')
+    params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior':
+        'allow', 'downloadPath': download_dir}}
+    browser.execute("send_command", params)
+# EOF
+
+# Get an address.
 num = "1011"
 street = "ESTELLE CT"
 zip_code = "27704"
+address = {'number':num,'street':street,'zip':zip_code}
 
 # Scrape some data.
-results = scrape_addr(driver,address = {'number':num,'street':street,'zip':zip_code})
+results = scrape_addr(driver,address)
 
 # Parse the results.
 row = results[0]
@@ -101,3 +128,6 @@ rdata = row.split(' ')
 
 rdata.remove('1','2','3','4','5')
 
+search_input = driver.find_element_by_css_selector('#main-col > div > div > div:nth-child(8) > p:nth-child(1) > a > img')
+
+search_input.click()
