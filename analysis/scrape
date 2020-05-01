@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+./scrape-gomaps.py > url.txt
+url="$(cat url.txt)"
+wget --quiet -O parcel.pdf "$url"
+pdftotext parcel.pdf parcel.txt
+rm url.txt
+rm parcel.pdf

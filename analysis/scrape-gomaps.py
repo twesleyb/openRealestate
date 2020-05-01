@@ -6,6 +6,7 @@ import os
 import sys
 import importlib
 from os.path import dirname
+from pandas import DataFrame
 
 ## Defaults:
 URL='http://maps2.roktech.net/durhamnc_gomaps4/'
@@ -21,6 +22,25 @@ import Py
 from Py.launch_bug import launch_bug
 from Py.zzz import zzz
 
+# Load addresses.
+from pandas import read_csv
+addr = read_csv('durham.csv')
+
+# Clean up the address data.
+addr = addr.dropna(axis='index',subset=['POSTCODE']) # Drop Na.
+addr['POSTCODE'] = [str(int(z)) for z in addr['POSTCODE'].values] # Coerce to str
+addr.loc[(addr.CITY == 'DURH'),'CITY']='DURHAM'
+addr.loc[(addr.CITY == 'CHAP'),'CITY']='CHAPEL HILL'
+
+# Subset data from Durham.
+addr = addr.loc[(addr.CITY == 'DURHAM'),]
+
+# Collect rows as dicts.
+mydict = addr.to_dict('index')
+
+# Coerce to list.
+addr_list = [mydict.get(key) for key in mydict.keys()]
+
 # Define a function that clicks a button and sleeps for a random duration.
 def click(button):
     button.click()
@@ -29,7 +49,6 @@ def click(button):
 
 # Define a wrapper to catch errors.
 # FIXME: if any error, return None and reset.
-
 def scrape_addr(driver,address,neighbors=True):
     ''' Scrape an addresses data from DurhamGOMaps.'''
     # Open the query builder.
@@ -42,8 +61,8 @@ def scrape_addr(driver,address,neighbors=True):
     button = driver.find_element_by_id("btnQueryBuilderClear")
     click(button)
     # Build a query.  
-    addr_str = address.get('number') + ' ' + address.get('street')
-    keys={"address":addr_str,"zip":address.get('zip')}
+    addr_str = address.get('NUMBER') + ' ' + address.get('STREET')
+    keys={"address":addr_str,"zip":address.get('POSTCODE')}
     query = "SITE_ADDRE = '{address}' And OWZIPA = {zip}".format(**keys)
     # Add query.
     text_box = driver.find_element_by_id("queryBuilderQueryTextArea")
@@ -52,80 +71,36 @@ def scrape_addr(driver,address,neighbors=True):
     # Submit query.
     button = driver.find_element_by_id("btnQueryBuildersearch")
     click(button)
-    # Need to wait until page is done loading...
-    # Response is pretty quick if you get a hit.
-    # Collect the initial results.
-    table = driver.find_element_by_id("tblSRNDetails")
     # Initial numer of results:
-    n0 = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
-    print("Found {} result(s).".format(n0),file=sys.stderr)
-    # Get neighbors?
-    if neighbors:
-        # Get adjacent properties and update table.
-        el = driver.find_element_by_id("adjoiner0")
-        button = el.find_element_by_tag_name('a')
-        click(button)
-        table = driver.find_element_by_id("tblSRNDetails")
-    # Collect results from table.
-    results = table.text.split("\n")
-    # Numer of results after adding neighbors:
-    n1 = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
-    print("Added {} neighbors.".format(n1-n0),file=sys.stderr)
+    n = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
+    print("Found {} result(s).".format(n),file=sys.stderr)
+#EOF
 
+def get_supplement(driver,result=0,data_type="report"):
+    # Find parcel report or tax history by number.
+    button = driver.find_element_by_id("{}{}".format(data_type,result))
+    # Open report in a new tab.
+    click(button)
+    zzz(5)
+    # Switch to new tab and get its url.
+    driver.switch_to.window(driver.window_handles[-1])
+    zzz()
+    url=driver.current_url
+    # Close the tab and switch back to main tab.
+    driver.close()
+    zzz()
+    driver.switch_to.window(driver.window_handles[-1])
+    return(url)
+# EOF.
 
-    def get_supplement(driver,number,data_type):
-        # Find parcel report or tax history by number.
-        button = driver.find_element_by_id("{}{}".format(data_type,number))
-        # Open report in a new tab.
-        click(button)
-        zzz(5)
-        # Switch to new tab and get its url.
-        driver.switch_to.window(driver.window_handles[-1])
-        zzz()
-        url=driver.current_url)
-        # Close the tab and switch back to main tab.
-        driver.close()
-        zzz(5)
-        driver.switch_to.window(driver.window_handles[-1])
-        return(url)
-    # EOF.
-
-    # Reset.
-    driver.refresh()
-    # Return the raw results.
-
-    print(urls)
-    return results
-# EOF
-
-
-# function to take care of downloading file
-def enable_download_headless(browser,download_dir):
-    browser.command_executor._commands["send_command"] = ("POST",
-            '/session/$sessionId/chromium/send_command')
-    params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior':
-        'allow', 'downloadPath': download_dir}}
-    browser.execute("send_command", params)
-# EOF
-
+## ACTUAL WORK:
 # Launch chromium bug.
-driver = launch_bug(URL,executable_path=DRIVER,headless=True)
-
-num = "1011"
-street = "ESTELLE CT"
-zip_code = "27704"
-address = {'number':num,'street':street,'zip':zip_code}
-
-# Scrape some data.
-results = scrape_addr(driver,address)
-
-# Parse the results.
-row = results[0]
-row = row.replace("Zoom Buffer Find Adjoiners Report Tax Info","1 2 3 4 5")
-rdata = row.split(' ')
-
-rdata.remove('1','2','3','4','5')
-
-search_input = driver.find_element_by_css_selector('#main-col > div > div > div:nth-child(8) > p:nth-child(1) > a > img')
-
-search_input.click()
+driver = launch_bug(URL,executable_path=DRIVER)
+# Get an address.
+address = addr_list[0]
+# Search for an address.
+scrape_addr(driver,address)
+# Get supplement.
+url = get_supplement(driver)
+driver.close()
+print(url)

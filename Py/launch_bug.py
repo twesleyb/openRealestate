@@ -11,7 +11,7 @@ def launch_bug(url,executable_path,downdir=None,headless=False):
     # Chromium download options:
     # https://stackoverflow.com/questions/46937319/how-to-use-chrome-webdriver-in-selenium-to-download-files-in-python
     # Parse defaults.
-    downdir = r"C:/Users/User/downloads/test"
+    downdir = r"C:\Users\User\downloads\\"
     # Create options to be passed to webdriver.
     options=webdriver.ChromeOptions()
     # Download options.
