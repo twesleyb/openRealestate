@@ -6,106 +6,75 @@ import os
 import sys
 import json
 import importlib
-from os.path import dirname
+from pandas import read_csv
 
 ## Defaults:
-URL='http://maps2.roktech.net/durhamnc_gomaps4/'
-DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
+CHROMIUM = '/home/twesleyb/bin/chromium/chromedriver.exe'
 
 # Directories.
 here = os.getcwd()
-root = dirname(here)
+root = os.path.dirname(here)
 sys.path.append(root)
 
 # Load Functions in root/Py
-import Py
-from Py.launch_bug import launch_bug
-from Py.zzz import zzz
+from Py.zzz import zzz 
+from Py.launch_bug import *
+from Py.find_address import *
+from Py.get_supplement import *
 
-# Load addresses.
-from pandas import read_csv
+# Load open address data.
 addr = read_csv('durham.csv')
 
-# Clean up the address data.
+# Clean-up the address data.
 addr = addr.dropna(axis='index',subset=['POSTCODE']) # Drop Na.
 addr['POSTCODE'] = [str(int(z)) for z in addr['POSTCODE'].values] # Coerce to str
-addr.loc[(addr.CITY == 'DURH'),'CITY']='DURHAM'
-addr.loc[(addr.CITY == 'CHAP'),'CITY']='CHAPEL HILL'
+addr.loc[(addr.CITY == 'DURH'),'CITY']='DURHAM' # Fix names.
+addr.loc[(addr.CITY == 'CHAP'),'CITY']='CHAPEL HILL' # Fix names.
 
-# Subset data from Durham.
+# Subset data from Durham, NC.
 addr = addr.loc[(addr.CITY == 'DURHAM'),]
 
 # Collect rows as dicts.
-mydict = addr.to_dict('index')
+addr_dict = addr.to_dict('index')
 
-# Coerce to list.
-addr_list = [mydict.get(key) for key in mydict.keys()]
+# Coerce to list of dicts.
+addr_list = [addr_dict.get(key) for key in addr_dict.keys()]
 
-# Define a function that clicks a button and sleeps for a random duration.
-def click(button):
-    button.click()
-    zzz()
-#EOF
-
-# Define a wrapper to catch errors.
-# FIXME: if any error, return None and reset.
-def scrape_addr(driver,address,neighbors=True):
-    ''' Scrape an addresses data from DurhamGOMaps.'''
-    # Open the query builder.
-    button = driver.find_element_by_id("queryBuilderNav")
-    click(button)
-    # Search for parcels.
-    drop_down = driver.find_element_by_name('Parcels')
-    click(drop_down)
-    # Clear any existing text.
-    button = driver.find_element_by_id("btnQueryBuilderClear")
-    click(button)
-    # Build a query.  
-    addr_str = address.get('NUMBER') + ' ' + address.get('STREET')
-    keys={"address":addr_str,"zip":address.get('POSTCODE')}
-    query = "SITE_ADDRE = '{address}' And OWZIPA = {zip}".format(**keys)
-    # Add query.
-    text_box = driver.find_element_by_id("queryBuilderQueryTextArea")
-    text_box.send_keys(query)
-    zzz()
-    # Submit query.
-    button = driver.find_element_by_id("btnQueryBuildersearch")
-    click(button)
-    # Initial numer of results:
-    n = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
-    print("Found {} result(s).".format(n),file=sys.stderr)
-#EOF
-
-def get_supplement(driver,result=0,data_type="report"):
-    # Find parcel report or tax history by number.
-    button = driver.find_element_by_id("{}{}".format(data_type,result))
-    # Open report in a new tab.
-    click(button)
-    zzz(5)
-    # Switch to new tab and get its url.
-    driver.switch_to.window(driver.window_handles[-1])
-    zzz()
-    url=driver.current_url
-    # Close the tab and switch back to main tab.
-    driver.close()
-    zzz()
-    driver.switch_to.window(driver.window_handles[-1])
-    return(url)
-# EOF.
-
+# The actual work.
 for i in range(len(addr_list)):
-    ## ACTUAL WORK:
-    print("Scraping data for address: {}".format(i))
-    # Launch chromium bughhk.
-    driver = launch_bug(URL,executable_path=DRIVER)
     # Get an address.
     address = addr_list[i]
+    address.keys()
+    msg = ' '.join([address.get('NUMBER'), address.get('STREET'),
+        address.get('CITY'), address.get('POSTCODE')])
+    print('Searching for: {}'.format(msg),file=sys.stderr)
+    # Launch chromium bug.
+    driver = launch_bug(chromium_path=CHROMIUM)
     # Search for an address.
-    scrape_addr(driver,address)
+    find_address(driver,address)
     # Get supplement.
     url = get_supplement(driver)
     driver.close()
+    # Add to address dictionary.
     address['report'] = url
-    with open('results.txt','a') as json_file:
+    with open('realestate.txt','a') as json_file:
         json.dump(address, json_file)
 # EOL
+
+
+import requests
+
+def safety(fun):
+    def wrapper(*args):
+        try:
+            return fun(*args)
+        except Exception:
+            print("problem")
+    return wrapper
+
+@safety
+def scrape(url):
+    requests.get(url)
+
+scrape('https://realpythor-on-python-decorators/#simple-decorators')
+
