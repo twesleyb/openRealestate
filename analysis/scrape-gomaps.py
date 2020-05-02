@@ -4,9 +4,9 @@
 
 import os
 import sys
+import json
 import importlib
 from os.path import dirname
-from pandas import DataFrame
 
 ## Defaults:
 URL='http://maps2.roktech.net/durhamnc_gomaps4/'
@@ -93,14 +93,19 @@ def get_supplement(driver,result=0,data_type="report"):
     return(url)
 # EOF.
 
-## ACTUAL WORK:
-# Launch chromium bug.
-driver = launch_bug(URL,executable_path=DRIVER)
-# Get an address.
-address = addr_list[0]
-# Search for an address.
-scrape_addr(driver,address)
-# Get supplement.
-url = get_supplement(driver)
-driver.close()
-print(url)
+for i in range(len(addr_list)):
+    ## ACTUAL WORK:
+    print("Scraping data for address: {}".format(i))
+    # Launch chromium bughhk.
+    driver = launch_bug(URL,executable_path=DRIVER)
+    # Get an address.
+    address = addr_list[i]
+    # Search for an address.
+    scrape_addr(driver,address)
+    # Get supplement.
+    url = get_supplement(driver)
+    driver.close()
+    address['report'] = url
+    with open('results.txt','a') as json_file:
+        json.dump(address, json_file)
+# EOL
