@@ -29,15 +29,15 @@ def get_report(driver,result=0):
     zzz()
     driver.switch_to.window(driver.window_handles[-1])
     # Download report with wget.
-    cmd = ["wget", "--quiet", "-O", "parcel.pdf", url]
+    cmd = ["wget", "--quiet", "-O", ".temp.pdf", url]
     process = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     response = process.communicate()
     # Convert pdf to text.
-    cmd = ['pdftotext', 'parcel.pdf', 'parcel.txt']
+    cmd = ['pdftotext', '.temp.pdf', '.temp.txt']
     process = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     response = process.communicate()
     # Read converted file.
-    f = open('parcel.txt','r')
+    f = open('.temp.txt','r')
     text = [f.readline() for line in f]
     f.close()
     # Parse the response.
@@ -48,8 +48,8 @@ def get_report(driver,result=0):
     vals = text[1::2]
     report = dict(zip(keys,vals))
     # Remove temporary files.
-    os.remove('parcel.pdf')
-    os.remove('parcel.txt')
+    os.remove('.temp.pdf')
+    os.remove('.temp.txt')
     # Return parcel report.
     return(report)
 # EOF.

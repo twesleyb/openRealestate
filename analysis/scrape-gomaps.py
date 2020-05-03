@@ -50,29 +50,37 @@ for i in range(len(addr_list)):
     # Get an address.
     address = addr_list[i]
     address.keys()
+
     # Status report.
     msg = ' '.join([address.get('NUMBER'), address.get('STREET'),
         address.get('CITY'), address.get('POSTCODE')])
     print('Searching for: {}'.format(msg),file=sys.stderr)
+
     # Search for an address.
     response = find_address(driver,address)
+
     # If address not found--skip iteration.
     if response is None:
         driver.refresh()
         zzz()
         continue
+
     # Status:
-    print(response,file=sys.stderr)
+    print("Address found. Collecting parcel report.",file=sys.stderr)
+
     # Get supplemental data.
     report = get_report(driver)
+
     # Add to address dictionary.
     address = addr_list.pop(i)
-    #address['report'] = url
+    address.update(report)
+
     # Write as json.
-    with open('realestate.txt','a') as json_file:
+    with open('durham-realestate.txt','a') as json_file:
         json.dump(address, json_file)
         json_file.write('\n')
         json_file.close()
+
     # Rinse and repeat.
     driver.refresh()
 # EOL
