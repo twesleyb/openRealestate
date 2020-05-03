@@ -1,0 +1,4 @@
+# If error caught or quit close file so results are saved.
+# log addresses that are not found
+# update list (pop) if success?
+

@@ -12,11 +12,12 @@ def zzz(t=None,tmin=1,tmax=1.5):
 #EOF
 
 def safety(fun):
-    def wrapper(*args, **kwargs):
+    ''' A wrapper function that catches errors and returns None.'''
+    def wrapper(*args):
         try:
-           return fun(*args, **kwargs)
+           return fun(*args)
         except Exception as e:
-            print(e)
+            print(e,file=sys.stderr)
             return None
     return wrapper
 
@@ -49,8 +50,6 @@ def find_address(driver,address):
     zzz()
     # Numer of results:
     n = int(driver.find_element_by_id("numberofResults").text.split(" ")[0])
-    print("Found {} result(s).".format(n),file=sys.stderr)
+    response = "Found {} result(s).".format(n)
+    return response
 #EOF
-
-
-

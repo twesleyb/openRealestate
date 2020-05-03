@@ -5,24 +5,22 @@
 import os
 import sys
 import json
-import importlib
 from pandas import read_csv
 
 ## Defaults:
 CHROMIUM = '/home/twesleyb/bin/chromium/chromedriver.exe'
 ADDRESSES = '/home/twesleyb/projects/open-realestate/data/durham.csv'
 
-# Directories.
-# Add root/Py to PYTHONPATH
+# Add root/Py to path.
 here = os.getcwd()
 root = os.path.dirname(here)
 sys.path.append(root)
 
 # Load Functions in root/Py
-from Py.zzz import zzz 
+from Py.zzz import *
 from Py.launch_bug import *
+from Py.get_report import *
 from Py.find_address import *
-from Py.get_supplement import *
 
 # Load open address data.
 addr = read_csv(ADDRESSES)
@@ -42,41 +40,39 @@ addr_dict = addr.to_dict('index')
 # Coerce to list of dicts.
 addr_list = [addr_dict.get(key) for key in addr_dict.keys()]
 
-# The actual work.
+# Launch chromium bug.
+driver = launch_bug(chromium_path=CHROMIUM)
+zzz(3)
+
+# Loop to scrape data for all address in list.
 for i in range(len(addr_list)):
+
     # Get an address.
     address = addr_list[i]
     address.keys()
+    # Status report.
     msg = ' '.join([address.get('NUMBER'), address.get('STREET'),
         address.get('CITY'), address.get('POSTCODE')])
     print('Searching for: {}'.format(msg),file=sys.stderr)
-    # Launch chromium bug.
-    driver = launch_bug(chromium_path=CHROMIUM)
     # Search for an address.
-    find_address(driver,address)
-    # Get supplement.
-    url = get_supplement(driver)
-    driver.close()
+    response = find_address(driver,address)
+    # If address not found--skip iteration.
+    if response is None:
+        driver.refresh()
+        zzz()
+        continue
+    # Status:
+    print(response,file=sys.stderr)
+    # Get supplemental data.
+    report = get_report(driver)
     # Add to address dictionary.
-    address['report'] = url
+    address = addr_list.pop(i)
+    #address['report'] = url
+    # Write as json.
     with open('realestate.txt','a') as json_file:
         json.dump(address, json_file)
+        json_file.write('\n')
+        json_file.close()
+    # Rinse and repeat.
+    driver.refresh()
 # EOL
-
-
-import requests
-
-def safety(fun):
-    def wrapper(*args):
-        try:
-            return fun(*args)
-        except Exception:
-            print("problem")
-    return wrapper
-
-@safety
-def scrape(url):
-    requests.get(url)
-
-scrape('https://realpythor-on-python-decorators/#simple-decorators')
-

@@ -16,4 +16,3 @@ driver = webdriver.Firefox(executable_path = GECKO, options = options)
 
 # Get webpage.
 driver.get(URL)
-
