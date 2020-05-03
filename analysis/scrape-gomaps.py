@@ -10,8 +10,10 @@ from pandas import read_csv
 
 ## Defaults:
 CHROMIUM = '/home/twesleyb/bin/chromium/chromedriver.exe'
+ADDRESSES = '/home/twesleyb/projects/open-realestate/data/durham.csv'
 
 # Directories.
+# Add root/Py to PYTHONPATH
 here = os.getcwd()
 root = os.path.dirname(here)
 sys.path.append(root)
@@ -23,7 +25,7 @@ from Py.find_address import *
 from Py.get_supplement import *
 
 # Load open address data.
-addr = read_csv('durham.csv')
+addr = read_csv(ADDRESSES)
 
 # Clean-up the address data.
 addr = addr.dropna(axis='index',subset=['POSTCODE']) # Drop Na.

@@ -7,11 +7,8 @@ from selenium.webdriver.chrome.options import Options
 
 def launch_bug(chromium_path,headless=False):
     ''' Launch Durham GOmaps webscraper. '''
-    URL='http://maps2.roktech.net/durhamnc_gomaps4/'
-    # Create a chrome webdriver.
-    # Chromium download options:
-    # https://stackoverflow.com/questions/46937319/how-to-use-chrome-webdriver-in-selenium-to-download-files-in-python
     # Create options to be passed to webdriver.
+    URL='http://maps2.roktech.net/durhamnc_gomaps4/'
     options=webdriver.ChromeOptions()
     # Download options.
     options.add_experimental_option("prefs", {
