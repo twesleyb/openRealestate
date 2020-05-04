@@ -7,14 +7,17 @@ import sys
 import json
 from pandas import read_csv
 
+## User parameters:
+# Output directory for data.
+data_dir = '/home/twesleyb/projects/open-realestate/data/'
+
 ## Defaults:
 CHROMIUM = '/home/twesleyb/bin/chromium/chromedriver.exe'
 ADDRESSES = '/home/twesleyb/projects/open-realestate/data/durham.csv'
+ROOT = '/home/twesleyb/projects/open-realestate/'
 
 # Add root/Py to path.
-here = os.getcwd()
-root = os.path.dirname(here)
-sys.path.append(root)
+sys.path.append(ROOT)
 
 # Load Functions in root/Py
 from Py.zzz import *
@@ -49,12 +52,11 @@ for i in range(len(addr_list)):
 
     # Get an address.
     address = addr_list[i]
-    address.keys()
 
     # Status report.
     msg = ' '.join([address.get('NUMBER'), address.get('STREET'),
         address.get('CITY'), address.get('POSTCODE')])
-    print('Searching for: {}'.format(msg),file=sys.stderr)
+    print('Searching for: {}...'.format(msg),file=sys.stderr)
 
     # Search for an address.
     response = find_address(driver,address)

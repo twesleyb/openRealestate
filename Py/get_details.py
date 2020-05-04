@@ -19,7 +19,15 @@ def get_report(driver,result=0):
 
     # Find parcel report by number.
     button = driver.find_element_by_id("report{}".format(result))
+
+    el = driver.find_element_by_id("taxbill{}".format(result))
+
+    button = el.find_element_by_tag_name('a')
+
+    button.click()
+
     # Open report in a new tab.
+
     button.click()
     zzz(5)
     # Switch to new tab and get its url.
@@ -36,29 +44,21 @@ def get_report(driver,result=0):
     response = process.communicate()
 
     # Convert pdf to text.
-    cmd = ['pdftotext','-raw','-nopgbrk','.temp.pdf', '.temp.txt']
+    cmd = ['pdftotext', '-raw','-nopgbrk','.temp.pdf', '.temp.txt']
     process = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     response = process.communicate()
 
     # Read converted file.
     f = open('.temp.txt','r')
     text = f.readlines()
+    #text = [f.readline() for line in f]
     f.close()
 
 text = [x for x in text if x != '\n'] # Drop '\n'
 text = [x.strip('\n') for x in text] # Remove excess '\n'
+del text[0:2] # Drop unnecessary elements.
 
-# Coerce to single string.
-string = ' '.join(text)
-
-keys = ['PIN','Parcel ID','Acreage','Land Use','Land Value','Land Use',
-        'Deed Book', 'Deed Page', 'Plat Book', 'Plat Page', 'Subdivision',
-        'Land Value', 'Building Value', 'Total Value', 'Sale Price']
-
-import re
-delim = '|'.join(keys)
-x = re.split(delim,string)
-[string.split(key)[1].split(delim) for key in keys]
+keys = ['PIN','Parcel ID','Acreage','Land Use','Land Value'
 
     # Parse the response.
     #text = text[3:-2] # Drop unnecessary elements.
