@@ -6,8 +6,8 @@ import sys
 ## User parameters:
 addr_data = '/home/twesleyb/projects/open-realestate/data/durham.csv'
 chromium_path = '/home/twesleyb/bin/chromium/chromedriver.exe'
-output_json = 'durham-realestate.json'
-output_err = 'durham-not-found.json'
+output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
+output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
 
 # Load Functions:
 from utils.zzz import *

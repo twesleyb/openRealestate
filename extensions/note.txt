@@ -1,2 +1,0 @@
-# Source code for Chrome extensions can be downloaded using the Chrome
- CRX extension.
