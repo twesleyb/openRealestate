@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
 
+import random
+from time import sleep
+
 import os
 import sys
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
+def zzz(t=None,tmin=1,tmax=1.5):
+    ''' Take a nap. '''
+    if t is None:
+        t = random.uniform(tmin,tmax)
+    sleep(t)
+#EOF
 
 def launch_bug(chromium_path,headless=False):
     ''' Launch Durham GOmaps webscraper. '''

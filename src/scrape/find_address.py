@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+'''Find an address on DurhamGOmaps.'''
 
 import sys
 import random
 from time import sleep
+
 
 def zzz(t=None,tmin=1,tmax=1.5):
     ''' Take a nap. '''
