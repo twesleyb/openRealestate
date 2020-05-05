@@ -46,7 +46,7 @@ while len(addr_list) > 0:
     # Add to address dictionary.
     address.update(results)
     # Append results to json file.
-    append_results(output_json)
+    append_results(address, output_json)
     # Rinse and repeat.
     driver.refresh()
 # EOL
