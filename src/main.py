@@ -41,7 +41,7 @@ while len(addr_list) > 0:
         zzz()
         continue # skips current iteration.
     # Status:
-    print("Address found. Collecting parcel report.",file=sys.stderr)
+    print("Address found. Collecting parcel report...\n",file=sys.stderr)
     results = get_report(driver)
     # Add to address dictionary.
     address.update(results)

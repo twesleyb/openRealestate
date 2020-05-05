@@ -1,11 +1,16 @@
 Durham, NC Tax Parcel Report Tuesday, May 5, 2020
 Parcel Information
-PIN 0716-01-09-9958 Parcel ID 198482
-Acreage 0.05300000 Land Use RES/ 1-FAMILY
-Deed Book 004999 Deed Page 000583
-Plat Book 002004 Plat Page 000055
-Subdivision COLVARD FRMS P-3 Site Address 204 COLVARD PARK DR
-Owner Name BENSON GERALD D Owner Address 204 COLVARD PARK DR
+PIN 0717-03-44-1810 Parcel ID 150621
+Acreage 0.06100000 Land Use
+RES/ TOWNHOUSE W/
+LAND
+Deed Book 008540 Deed Page 000357
+Plat Book 000151 Plat Page 000121
+Subdivision
+CHANCELLORS RDG 3
+TWNHMS
+Site Address 422 INTERN WAY
+Owner Name RUPCICH LAURA BETH Owner Address 422 INTERN WAY
 DURHAM , NC 27713
-Land Value $1.00 Building Value $0.00
-Total Value $1.00 Sale Price $0.00
+Land Value $40,000.00 Building Value $171,069.00
+Total Value $211,069.00 Sale Price $0.00
