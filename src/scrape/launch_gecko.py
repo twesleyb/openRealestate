@@ -4,7 +4,7 @@ import sys
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
-def launch_gecko(gecko_path,headless=True):
+def launch_gecko(gecko_path, url=None, headless=True):
     # Options:
     options = Options()
     if headless:
