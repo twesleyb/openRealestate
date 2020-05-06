@@ -15,10 +15,9 @@ def zzz(t=None,tmin=1,tmax=1.5):
     sleep(t)
 #EOF
 
-def launch_bug(chromium_path,headless=False):
-    ''' Launch Durham GOmaps webscraper. '''
+def launch_bug(chromium_path,url = None, headless=False):
+    ''' Launch chromium webdriver. '''
     # Create options to be passed to webdriver.
-    URL='http://maps2.roktech.net/durhamnc_gomaps4/'
     options=webdriver.ChromeOptions()
     # Download options.
     options.add_experimental_option("prefs", {
@@ -51,7 +50,9 @@ def launch_bug(chromium_path,headless=False):
     driver.execute_cdp_cmd("Network.setExtraHTTPHeaders", 
             {"headers": {"User-Agent": "browser1"}})
     # Get webpage.
-    driver.get(URL)
-    print("Launched chromium at: {}".format(URL),file=sys.stderr)
-    return driver
+    if url is not None:
+        driver.get(url)
+        print("Launched chromium at: {}".format(url),file=sys.stderr)
+    # EIS
+    return(driver)
 #EOF

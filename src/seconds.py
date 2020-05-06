@@ -1,9 +1,28 @@
 #!/usr/bin/env python3
 
 ## Parameters:
-executable_path='/home/twesleyb/projects/open-realestate/drivers/geckodriver.exe'
+gecko = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
+parcel_id = 150621
+
+# Imports
+from bs4 import BeautifulSoup  
 
 from scrape.launch_gecko import *
 
+# Defaults:
+BASE_URL='https://property.spatialest.com/nc/durham/#/property/{}'
 
-launch_gecko(executable_path)
+# Launch gecko
+driver = launch_gecko(executable_path=gecko)
+
+# Get webpage.
+url = BASE_URL.format(parcel_id)
+driver.get(url)
+
+# Get html source.
+html = driver.page_source
+
+# Parse with bs4.
+soup = BeautifulSoup(html,'html')
+
+
