@@ -15,7 +15,8 @@ from scrape.launch_gecko import *
 BASE_URL='https://property.spatialest.com/nc/durham/#/property/{}'
 
 # Launch gecko
-driver = launch_gecko(gecko_path=gecko)
+driver = launch_gecko(gecko_path=gecko,headless=False)
+driver.get(
 
 # Get webpage.
 url = BASE_URL.format(parcel_id)
