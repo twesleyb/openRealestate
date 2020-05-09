@@ -5,6 +5,8 @@ from selenium import webdriver
 from selenium.webdriver import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
 
+from random import randrange
+
 # Additional imports
 from utils.zzz import *
 #from scrape.launch_gecko import *
@@ -31,50 +33,52 @@ from scrape.find_address import *
 ## Input parameters:
 # NOTE: Firefox executable needs to be in the same directory as geckodriver, 
 # or set as en environmental variable. (Is it set on Windows side?)
-gecko = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
-addr_data = '/home/twesleyb/projects/open-realestate/data/durham.csv'
+gecko_driver = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
 #output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
 #output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
+
+## DEFAULTS:
+firefox_profile = '/home/twesleyb/projects/open-realestate/firefox-profile/'
+addr_data = '/home/twesleyb/projects/open-realestate/data/durham.csv'
 
 ## Create firefox profile.
 # NOTE: (1) Calls to FirefoxProfile() create a temporary firefox profile, 
 # which is saved in /tmp/. e.g.: /tmpt/tmpizzfipxs
 # You can see its path with: profile.path
-# NOTE: (2) You can pass a path to FirefoxProfile.
-# If you do this, a temporary copy of the profile is made. For example,
+# NOTE: (2) You can pass a path to FirefoxProfile().
+# If you do this, a temporary copy of the profile is made. Its path looks
+# like:
 # > profile.path
 # '/tmp/tmpvo_h1gzw/webdriver-py-profilecopy'
-
-firefox_profile = '/home/twesleyb/projects/open-realestate/firefox-profile/'
+# The driver will inherit any settings set in this directory.
 profile = FirefoxProfile(firefox_profile)
+
 #profile.set_preference("browser.download.folderList", 2)
 #profile.set_preference("browser.download.dir",'/mnt/d/projects/downloads')
-#profile.set_preference("browser.download.panel.shown", False)
-#profile.set_preference("browser.helperApps.neverAsk.saveToDisk",
-#        "text/csv;application/vnd.ms-excel;application/msword")
-#profile.update_preferences()
+#driver.profile.update_preferences()
+
 ## Create firefox options.
 options = Options()
+
 #options.add_argument('--headless')
 ## Create webdriver.
 driver = webdriver.Firefox(executable_path=gecko,
     options=options,firefox_profile=profile,
-    service_log_path = '/dev/null')
+    service_log_path = '/dev/null') # Supress output logs.
 
 ## Navigate to durham gomaps
 gomaps = 'http://maps2.roktech.net/durhamnc_gomaps4/'
 driver.get(gomaps)
-zzz(5)
 
 ## Load address list.
 addr_list = load_durham_addresses(addr_data)
 
 ## Get an address.
-address = addr_list[0]
+i = randrange(len(addr_list))
+address = addr_list[i]
 
 # Search for address.
 response = find_address(driver,address)
-zzz(5)
 
 # Check response.
 print(response)
