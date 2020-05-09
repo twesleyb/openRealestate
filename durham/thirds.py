@@ -21,6 +21,12 @@ from scrape.find_address import *
 # When you launch the driver, user.js is created.
 
 # What are the minimum requirements for a profile?
+# You can create a directory containing user.js and it works.
+
+# You can pass a file path to an empty directory, and it works.
+# A tempory directory will be created with a new user.js with the defaults.
+
+# If we just update handlers, is that enough?
 
 ## Input parameters:
 # NOTE: Firefox executable needs to be in the same directory as geckodriver, 
@@ -39,19 +45,18 @@ output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
 # > profile.path
 # '/tmp/tmpvo_h1gzw/webdriver-py-profilecopy'
 
-profile = FirefoxProfile('/home/twesleyb/downloads/myprofile/')
-
+a_real_profile = '/home/twesleyb/downloads/myprofile/'
+temp = '/home/twesleyb/projects/open-realestate/firefox-profile/'
+profile = FirefoxProfile(temp)
 #profile.set_preference("browser.download.folderList", 2)
 #profile.set_preference("browser.download.dir",'/mnt/d/projects/downloads')
 #profile.set_preference("browser.download.panel.shown", False)
 #profile.set_preference("browser.helperApps.neverAsk.saveToDisk",
 #        "text/csv;application/vnd.ms-excel;application/msword")
 #profile.update_preferences()
-
 ## Create firefox options.
 options = Options()
 #options.add_argument('--headless')
-
 ## Create webdriver.
 driver = webdriver.Firefox(executable_path=gecko,
         options=options,firefox_profile=profile)
