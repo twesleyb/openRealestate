@@ -45,10 +45,9 @@ if response is None:
     continue
 
 # Increase buffer distance.
+print("Increasing buffer...",file=sys.stderr)
 n = int(response.split(' ')[1])
 buffer_dist = 0
-
-print("Increasing buffer...",file=sys.stderr)
 while n <= 1000:
     buffer_dist += 100
     # Open buffer box before trying to select an option from drop down!
@@ -75,5 +74,23 @@ while n <= 1000:
 # Download results.
 driver.find_element_by_id('exportToExcelbtn').click()
 
-# Parse results.
+# Parse results -- remove found addresses from address list.
+from pandas import read_csv
+
+DATA = '/home/twesleyb/projects/open-realestate/downloads/export.csv'
+results = read_csv(DATA)
+
+results_dict = results.to_dict('index')
+results_list = [results_dict.get(key) for key in results_dict.keys()]
+# GET NUMBER
+# STREET
+# CITY
+# POSTCODE
+
+collected_addr = [res.get('SITE_ADDRE').strip() for res in results_list]
+
+items = [' '.join([addr.get('STREET'),addr.get('NUMBER')]) for addr in addr_list]
+
+[ b.index(x) if x in b else None for x in a ]
+
 

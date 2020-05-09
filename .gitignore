@@ -16,7 +16,6 @@ renv/
 
 # Ignore downloads and extensions.
 extensions/
-downloads/
 
 # Compiled python files.
 *.pyc
