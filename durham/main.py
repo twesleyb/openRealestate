@@ -29,19 +29,48 @@ driver = launch_gecko(gecko_driver,firefox_profile=profile,
 ## Load address list.
 addr_list = load_durham_addresses(ADDR_DATA)
 
-## Get an address.
+## Get a random address.
 i = randrange(len(addr_list))
 address = addr_list[i]
 
 # Search for address.
+# NOTE: The following error will be caught, and results in response = None.
+# Alert Text: None
+# Message: Dismissed user prompt dialog: No Features Found.
 response = find_address(driver,address)
 
 # Check response.
 if response is None:
-print(response)
+    driver.refresh()
+    continue
 
 # Increase buffer distance.
-#add_buffer(driver,buffer_dist=1000)
+n = int(response.split(' ')[1])
+buffer_dist = 0
+
+print("Increasing buffer...",file=sys.stderr)
+while n <= 1000:
+    buffer_dist += 100
+    # Open buffer box before trying to select an option from drop down!
+    buffer_box = driver.find_element_by_id('buffer0')
+    buffer_box.click()
+    sleep(2)
+    # Selects parcel option.
+    xpath = "//select[@name='activeLayersBuffer']/option[text()='Parcels']"
+    drop_down = driver.find_element_by_xpath(xpath)
+    drop_down.click()
+    sleep(2)
+    # Add buffer.
+    driver.find_element_by_id('buferdistance').send_keys(buffer_dist)
+    sleep(2)
+    # Submit.
+    driver.find_element_by_id('buffersearchbtn').click()
+    sleep(2)
+    n = int(driver.find_element_by_id('numberofResults').text.split(' ')[0])
+    print("Number of results: {}.".format(n))
+    if n == 1000: 
+        break
+# EWL
 
 # Download results.
 driver.find_element_by_id('exportToExcelbtn').click()
