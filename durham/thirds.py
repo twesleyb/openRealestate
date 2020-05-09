@@ -53,16 +53,10 @@ addr_data = '/home/twesleyb/projects/open-realestate/data/durham.csv'
 # The driver will inherit any settings set in this directory.
 profile = FirefoxProfile(firefox_profile)
 
-#profile.set_preference("browser.download.folderList", 2)
-#profile.set_preference("browser.download.dir",'/mnt/d/projects/downloads')
-#driver.profile.update_preferences()
+launch_gecko(gecko_path,firefox_profile=profile,url=gomaps,headless=True)
 
-## Create firefox options.
-options = Options()
-
-#options.add_argument('--headless')
 ## Create webdriver.
-driver = webdriver.Firefox(executable_path=gecko,
+driver = webdriver.Firefox(executable_path=gecko_driver,
     options=options,firefox_profile=profile,
     service_log_path = '/dev/null') # Supress output logs.
 
@@ -88,3 +82,6 @@ print(response)
 
 # Download results.
 driver.find_element_by_id('exportToExcelbtn').click()
+
+# Parse results.
+

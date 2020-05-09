@@ -1,61 +1,52 @@
 #!/usr/bin/env python3
+''' It's so easy. '''
 
-import os
 import sys
-import importlib
-from os.path import dirname
 
-## Defaults:
-TORPASS="torpass"
-BASE_URL="https://www.zillow.com/"
-DRIVER = '/home/twesleyb/bin/chromium/chromedriver.exe'
+## User parameters:
+addr_data = '/home/twesleyb/projects/open-realestate/data/durham.csv'
+chromium_path = '/home/twesleyb/projects/open-realestate/drivers/chromium/chromedriver.exe'
+output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
+output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
 
-# Directories.
-here = os.getcwd()
-root = dirname(here)
-sys.path.append(root)
+# Load Functions:
+from utils.zzz import *
+from utils.append_results import *
 
-# Load Functions in root/Py
-import Py
-from Py.get_pass import get_pass
-from Py.check_ip import check_ip
-from Py.randomize_ip import randomize_ip 
-from Py.launch_bug import launch_bug
+from scrape.load_durham_addresses import *
+from scrape.find_address import *
+from scrape.launch_bug import *
+from scrape.get_report import *
 
-# Example: how to reload a module.
-#importlib.reload(Py.get_pass)
-#from Py.get_pass import get_pass
+# Load addresses.
+addr_list = load_durham_addresses(addr_data)
 
-# Get HashedControlPassword from password store.
-password = get_pass(TORPASS)
+# Launch chromium bug.
+driver = launch_bug(chromium_path)
 
-# Check ip address.
-ip = check_ip()
-
-# Start tor!
-print("Start tor in another terminal!",file=sys.stderr)
-
-# Randomize IP address.
-ip = randomize_ip(password)
-
-# Get tor session.
-
-session = tor_session(password)
-
-
-# Test: launch chromium bug.
-ipecho = 'http://ipecho.net/plain'
-driver = launch_bug(url=ipecho,executable_path=DRIVER,headless=True)
-
-# Note, the IP for our bug is still the same!
-# Need to pass torr session along...
-session = tr.session
-zillow='https://www.zillow.com/'
-response = session.get(zillow)
-response.status_code
-response.text # We have been detected!
-# Check session's ip address.
-session.get(ipecho).text
-
-
-zip_code = 27519
+# Loop through address list, scrape report data.
+while len(addr_list) > 0:
+    # Status report.
+    address = addr_list.pop(0)
+    msg = ' '.join([address.get('NUMBER'), address.get('STREET'),
+        address.get('CITY'), address.get('POSTCODE')])
+    print('Searching for: {}...'.format(msg),file=sys.stderr)
+    # Search for an address.
+    response = find_address(driver,address)
+    # If address was not found--skip loop iteration.
+    if response is None:
+        # Append address to file.
+        append_results(address,output_err)
+        driver.refresh()
+        zzz()
+        continue # skips current iteration.
+    # Status:
+    print("Address found. Collecting parcel report...\n",file=sys.stderr)
+    results = get_report(driver)
+    # Add to address dictionary.
+    address.update(results)
+    # Append results to json file.
+    append_results(address, output_json)
+    # Rinse and repeat.
+    driver.refresh()
+# EOL
