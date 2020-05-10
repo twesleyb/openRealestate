@@ -6,10 +6,12 @@ from selenium import webdriver
 from selenium.webdriver import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
 
+from pandas import read_csv
+
 # Additional imports.
-from launch_gecko import *
-from load_durham_addresses import *
-from find_address import *
+from durham.launch_gecko import *
+from durham.load_durham_addresses import *
+from durham.find_address import *
 
 ## Input parameters:
 gecko_driver = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
@@ -17,7 +19,7 @@ gecko_driver = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
 #output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
 
 ## DEFAULTS:
-PROFILE = '/home/twesleyb/projects/open-realestate/firefox-profile/'
+PROFILE = '/home/twesleyb/projects/open-realestate/profile/'
 ADDR_DATA = '/home/twesleyb/projects/open-realestate/data/durham.csv'
 GOMAPS = 'http://maps2.roktech.net/durhamnc_gomaps4/'
 
@@ -45,7 +47,7 @@ if response is None:
     continue
 
 # Increase buffer distance.
-print("Increasing buffer...",file=sys.stderr)
+print("Adding additional parcels to search results...",file=sys.stderr)
 n = int(response.split(' ')[1])
 buffer_dist = 0
 while n <= 1000:
@@ -75,13 +77,13 @@ while n <= 1000:
 driver.find_element_by_id('exportToExcelbtn').click()
 
 # Parse results -- remove found addresses from address list.
-from pandas import read_csv
 
 DATA = '/home/twesleyb/projects/open-realestate/downloads/export.csv'
 results = read_csv(DATA)
 
 results_dict = results.to_dict('index')
 results_list = [results_dict.get(key) for key in results_dict.keys()]
+
 # GET NUMBER
 # STREET
 # CITY
@@ -89,8 +91,12 @@ results_list = [results_dict.get(key) for key in results_dict.keys()]
 
 collected_addr = [res.get('SITE_ADDRE').strip() for res in results_list]
 
-items = [' '.join([addr.get('STREET'),addr.get('NUMBER')]) for addr in addr_list]
+current_addresses = [' '.join([addr.get('NUMBER'),addr.get('STREET')]) for addr in addr_list]
 
-[ b.index(x) if x in b else None for x in a ]
+check = [ current_addresses.index(x) if x in current_addresses else None for addr in collected_addr ]
+
+x = collected_addr[1]
+x in current_addresses
+
 
 
