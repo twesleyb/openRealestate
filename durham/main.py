@@ -6,17 +6,25 @@
 # occured at i = 123509 
 
 # Imports.
-import os
-from pandas import read_csv
-from random import randrange
-from selenium import webdriver
-from selenium.webdriver import FirefoxProfile
-from selenium.webdriver.firefox.options import Options
+#import os
+#from pandas import read_csv
+#from random import randrange
+#from selenium import webdriver
+#from selenium.webdriver import FirefoxProfile
+#from selenium.webdriver.firefox.options import Options
 
 # Additional imports.
-from durham.launch_gecko import *
-from durham.load_durham_addresses import *
-from durham.find_address import *
+from gomaps import scraper
+
+## DEFAULTS:
+PROFILE = '/home/twesleyb/projects/open-realestate/profile/'
+ADDR_DATA = '/home/twesleyb/projects/open-realestate/data/durham-addresses.csv'
+GOMAPS = 'http://maps2.roktech.net/durhamnc_gomaps4/'
+
+## Input parameters:
+gecko_driver = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
+#output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
+#output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
 
 def combine_terms(mydict,**kwargs):
     ''' Combine site address and zip code to identify a parcel. '''
@@ -25,23 +33,14 @@ def combine_terms(mydict,**kwargs):
     return(' '.join(clean_vals))
 # EOF
 
-## Input parameters:
-gecko_driver = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
-#output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
-#output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
-
-## DEFAULTS:
-PROFILE = '/home/twesleyb/projects/open-realestate/profile/'
-ADDR_DATA = '/home/twesleyb/projects/open-realestate/data/durham-addresses.csv'
-GOMAPS = 'http://maps2.roktech.net/durhamnc_gomaps4/'
 
 ## Create webdriver.
-profile = FirefoxProfile(PROFILE) 
-driver = launch_gecko(gecko_driver,firefox_profile=profile,
+profile = scraper.firefox_profile(PROFILE) 
+driver = scraper.launch_gecko(gecko_driver,firefox_profile=profile,
         url=GOMAPS,headless=True)
 
 ## Load address list.
-addr_list = load_durham_addresses(ADDR_DATA)
+addr_list = scraper.load_durham_addresses(ADDR_DATA)
 
 ## Collect addresses that we cannot find in a list:
 not_found = list()

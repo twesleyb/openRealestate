@@ -1,13 +1,30 @@
 #!/usr/bin/env python3
 
+import os
+import re
+import sys
+import random
+import subprocess
+from time import sleep
 from pandas import read_csv
+from selenium import webdriver
+from selenium.webdriver import FirefoxProfile
+from selenium.webdriver.firefox.options import Options
+
+
+def zzz(t=None,tmin=1,tmax=1.5):
+    ''' A function that just sleeps for a random duration. '''
+    if t is None:
+        t = random.uniform(tmin,tmax)
+    sleep(t)
+
 
 def load_durham_addresses(addr_data):
     ''' Load Durham addresses from https://openaddresses.io/ '''
     addr = read_csv(addr_data)
     # Clean-up the address data.
     addr = addr.dropna(axis='index',subset=['POSTCODE']) # Drop Na.
-    addr['POSTCODE'] = [str(int(z)) for z in addr['POSTCODE'].values] # Coerce to str
+    addr['POSTCODE'] = [str(int(z)) for z in addr['POSTCODE'].values] # To str.
     addr.loc[(addr.CITY == 'DURH'),'CITY']='DURHAM' # Fix names.
     addr.loc[(addr.CITY == 'CHAP'),'CITY']='CHAPEL HILL' # Fix names.
     # Subset data from Durham, NC.
@@ -18,32 +35,7 @@ def load_durham_addresses(addr_data):
     addr_list = [addr_dict.get(key) for key in addr_dict.keys()]
     return(addr_list)
 #EOF
-#!/usr/bin/env python3
-''' A function that just sleeps for a random duration. '''
 
-import random
-from time import sleep
-
-def zzz(t=None,tmin=1,tmax=1.5):
-    ''' Take a nap. '''
-    if t is None:
-        t = random.uniform(tmin,tmax)
-    sleep(t)
-#EOF
-#!/usr/bin/env python3
-'''Find an address on DurhamGOmaps.'''
-
-import sys
-import random
-from time import sleep
-
-
-def zzz(t=None,tmin=1,tmax=1.5):
-    ''' Take a nap. '''
-    if t is None:
-        t = random.uniform(tmin,tmax)
-    sleep(t)
-#EOF
 
 def safety(fun):
     ''' A wrapper function that catches errors and returns None.'''
@@ -55,9 +47,10 @@ def safety(fun):
             return None
     return wrapper
 
+
 @safety
 def find_address(driver,address):
-    ''' Find an address on DurhamGOMaps.'''
+    '''Find an address on DurhamGOmaps.'''
     # Open the query builder.
     button = driver.find_element_by_id("queryBuilderNav")
     button.click()
@@ -87,48 +80,27 @@ def find_address(driver,address):
     response = "Found {} result(s).".format(n)
     return response
 #EOF
-#!/usr/bin/env python3
 
-import os
-import sys
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 
-def launch_gecko(gecko_path, firefox_profile = None, url=None, headless=False,
-        log_path = '/dev/null'):
+def firefox_profile(profile_path):
+    profile = FirefoxProfile(profile_path)
+    return (profile)
+
+def launch_gecko(gecko_path, firefox_profile = None, url=None, 
+        headless=False, log_path = '/dev/null'):
     ''' Launch geckodriver at a specified url. '''
-
     options = Options()
-
     if headless:
         options.add_argument('--headless')
-
     driver = webdriver.Firefox(executable_path=gecko_path, 
             options = options, firefox_profile = firefox_profile,
             service_log_path = log_path)
-
     if url is not None:
         driver.get(url)
         print("Launched gecko at: {}".format(url),file=sys.stderr)
-
     return(driver)
 #EOF
-#!/usr/bin/env python3
-''' Download report as pdf, convert it to text, and extract its key results. '''
 
-import os
-import re
-import sys
-import subprocess
-
-def zzz(t=None,tmin=1,tmax=1.5):
-    ''' Take a nap. '''
-    import random
-    from time import sleep
-    if t is None:
-        t = random.uniform(tmin,tmax)
-    sleep(t)
-#EOF
 
 def get_report_url(driver,result=0):
     ''' Get url for the supplemental report associated with an address.'''
@@ -148,6 +120,7 @@ def get_report_url(driver,result=0):
     return(url)
 # EOF
 
+
 def download_report(url,output_pdf='.temp.pdf'):
     ''' Get supplemental data associated with an address.'''
     # Download report with wget.
@@ -166,12 +139,14 @@ def convert_report(input_pdf='.temp.pdf',output_txt='.temp.txt'):
     return(stderr)
 #EOF
 
+
 def get_kv_pair(string,key):
     ''' Extract key-value pairs from a string. '''
     value = string.split(key)[1].strip().split(' ')[0].strip()
     pair = {key:value}
     return(pair)
 #EOF
+
 
 def parse_report(input_text = '.temp.txt'):
     ''' Parse the text output of pdftotext. '''
@@ -189,6 +164,7 @@ def parse_report(input_text = '.temp.txt'):
     results = {k: v for d in results_list for k, v in d.items()}
     return(results)
 #EOF
+
 
 def get_report(driver):
     ''' Wrap-up all the work done above in a single function. '''
