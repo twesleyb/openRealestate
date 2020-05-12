@@ -6,44 +6,19 @@
 # occured at i = 123509 
 
 # Imports.
-#import os
-#from pandas import read_csv
-#from random import randrange
-#from selenium import webdriver
-#from selenium.webdriver import FirefoxProfile
-#from selenium.webdriver.firefox.options import Options
+from webscraper import utils
+from webscraper import gomaps
+from webscraper import addresses
 
-# Additional imports.
-from gomaps import scraper
-
-## DEFAULTS:
-PROFILE = '/home/twesleyb/projects/open-realestate/profile/'
-ADDR_DATA = '/home/twesleyb/projects/open-realestate/data/durham-addresses.csv'
-GOMAPS = 'http://maps2.roktech.net/durhamnc_gomaps4/'
-
-## Input parameters:
-gecko_driver = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
-#output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
-#output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
-
-def combine_terms(mydict,**kwargs):
-    ''' Combine site address and zip code to identify a parcel. '''
-    vals = [mydict.get(arg) for arg in kwargs.values()]
-    clean_vals = [val.strip() for val in vals]
-    return(' '.join(clean_vals))
-# EOF
-
+## Parameters:
+output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
+output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
 
 ## Create webdriver.
-profile = scraper.firefox_profile(PROFILE) 
-driver = scraper.launch_gecko(gecko_driver,firefox_profile=profile,
-        url=GOMAPS,headless=True)
+driver = gomaps.launch_gecko(headless=True)
 
-## Load address list.
-addr_list = scraper.load_durham_addresses(ADDR_DATA)
-
-## Collect addresses that we cannot find in a list:
-not_found = list()
+## Load address list = Class.
+durham = addresses.durham
 
 ## ORDER OF OPERATIONS:
 # * Search for a randomized address.
@@ -56,57 +31,34 @@ not_found = list()
 # * Write data to file!!!
 
 
-while len(addr_list) > 0:
+while len(durham.addr_list) > 0:
+
     ## Get a random address.
-    i = randrange(len(addr_list))
-    address = addr_list[i]
+    address = durham.random()
+
     # Search for address.
-    # NOTE: The following error will be caught, and results in response = None.
-    # Alert Text: None
-    # Message: Dismissed user prompt dialog: No Features Found.
-    response = find_address(driver,address)
+    response = gomaps.find_address(driver,address)
+
     # Check response.
     if response is None:
+        append_results(address,output_err)
         driver.refresh()
         sleep(5)
-        not_found.append(addr_list.pop(i))
         continue
-    # EIF
-    # Increase buffer distance.
-    print("Adding additional parcels to search results...",file=sys.stderr)
-    n = int(response.split(' ')[1])
-    buffer_dist = 2500
-    while n <= 1000:
-        buffer_dist += 500
-        # Open buffer box before trying to select an option from drop down!
-        buffer_box = driver.find_element_by_id('buffer0')
-        buffer_box.click()
-        sleep(2)
-        # Selects parcel option.
-        xpath = "//select[@name='activeLayersBuffer']/option[text()='Parcels']"
-        drop_down = driver.find_element_by_xpath(xpath)
-        drop_down.click()
-        sleep(2)
-        # Add buffer.
-        el = driver.find_element_by_id('buferdistance')
-        el.clear()
-        el.send_keys(buffer_dist)
-        sleep(2)
-        # Submit.
-        driver.find_element_by_id('buffersearchbtn').click()
-        sleep(2)
-        n = int(driver.find_element_by_id('numberofResults').text.split(' ')[0])
-        print("Number of results: {}.".format(n))
-        if n == 1000: 
-            break
-    # EWL
-    # Download results.
-    driver.find_element_by_id('exportToExcelbtn').click()
-    sleep(5)
-    driver.refresh()
+
+    ## Add additional results.
+    response = gomaps.add_buffer(driver,start=500,increase_by=500)
+
+    ## Download.
+    download_results(driver)
+
+    ## Load results and append to output.
+    append_results(address, output_json)
+
     # Parse results -- remove found addresses from address list.
-    DATA = '/home/twesleyb/projects/open-realestate/downloads/export.csv'
-    results = read_csv(DATA)
+    RESULTS_PATH = '/home/twesleyb/projects/open-realestate/downloads/export.csv'
+    results = read_csv(RESULTS_PATH)
+
     results_dict = results.to_dict('index')
     results_list = [results_dict.get(key) for key in results_dict.keys()]
     # We collected these addresses:
@@ -125,3 +77,10 @@ while len(addr_list) > 0:
 
 
 
+    # Add to address dictionary.
+    address.update(results)
+    # Append results to json file.
+    append_results(address, output_json)
+    # Rinse and repeat.
+    driver.refresh()
+# EOL
