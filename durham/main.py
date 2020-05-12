@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 ''' It's so easy. '''
 
-# FIXME: remove excessive spaces from results.
-# FIXME: Remove extra spaces from input addresss - not common.
+# FIXME: remove address that have not been found from addr_list.
 # FIXME: How to handle this error:
 # invalid literal for int() with base 10: ''
 # occured at i = 123509 
-# FIXME: load errors and previously found results to speed things up.
 
 # Imports.
 import sys
+
+# Local imports.
 from webscraper import utils
 from webscraper import gomaps
 from webscraper import addresses
@@ -20,9 +20,14 @@ driver = gomaps.launch_gecko(headless=True)
 ## Load address list class.
 durham = addresses.durham
 
-while len(durham.addr_list) > 0:
+## Get filtered addresses.
+addr_list = durham.addr_list
+addr_filt = durham.filt(addr_list)
+
+## Loop to do the work:
+while len(addr_filt) > 0:
     ## Get a random address.
-    address = durham.random()
+    address = durham.random(addr_filt)
     msg = ' '.join([address.get('NUMBER'), address.get('STREET'),
         address.get('CITY'), address.get('POSTCODE')])
     print('Searching for: {}...'.format(msg), file=sys.stderr)
@@ -45,5 +50,3 @@ while len(durham.addr_list) > 0:
     print('Updating results.\n',file=sys.stderr)
     gomaps.append_results(results)
 # EOL
-
-# EOF
