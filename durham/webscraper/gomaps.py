@@ -3,14 +3,20 @@
 import os
 import re
 import sys
-import json
+
 import random
 import subprocess
 from time import sleep
+
 from pandas import read_csv
+
 from selenium import webdriver
 from selenium.webdriver import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
+
+import json
+from pathlib import Path
+from importlib import import_module
 
 from . import utils
 from . import config
@@ -118,10 +124,12 @@ def add_buffer(driver, start, increase_by, n_max=1000):
         if n == n_max:
             break
         # EOL
-    return "Found {} result(s)".format(n)
+    return 'Found {} result(s)'.format(n)
 # EOF
 
+
 def download_results(driver,refresh=True):
+    ''' Download currently active results from gomaps. '''
     driver.find_element_by_id('exportToExcelbtn').click()
     utils.zzz(5)
     if refresh:
@@ -129,11 +137,72 @@ def download_results(driver,refresh=True):
 # EOF
 
 
+def load_results():
+    ''' Load downloaded results (export.csv) into python. '''
 
-def append_results(mydict,output_json):
-    ''' Append a dictionary to json file. '''
-    with open(output_json,'a') as json_file:
-        json.dump(mydict, json_file)
-        json_file.write('\n')
-    json_file.close()
+    # Load results.
+    results = read_csv(config.EXPORT_CSV)
+
+    # Convert rows to dicts and combine in a list..
+    results_dict = results.to_dict('index')
+    results_list = [results_dict.get(key) for key in results_dict.keys()]
+
+    # Get parcel ids and create results dictionary.
+    ids = [res.get('PARCEL_ID') for res in results_list]
+    results = dict(zip(ids,results_list))
+
+    # Clean-up
+    os.remove(config.EXPORT_CSV)
+
+    return results
 # EOF
+
+
+def append_errors(mydict):
+    ''' Append a dictionary to json file.
+    Requires:
+        pathlib.Path, json.dump
+    '''
+    output = config.STDERR
+    try:
+        check = Path(output).resolve(strict=True)
+    except FileNotFoundError:
+        # If file doesn't exist, then create it.
+        json_file = open(output,"a+")
+    else:
+        # If file exists, then append to it.
+        with open(output,"a+") as json_file:
+            json.dump(mydict, json_file)
+            json_file.write('\n')
+            json_file.close()
+# EOF
+
+
+def append_results(mydict):
+    ''' Append a dictionary to json file.
+    Requires:
+        pathlib.Path, importlib.import_module, json.dump
+    '''
+    output = config.STDOUT
+    try:
+        check = Path(output).resolve(strict=True)
+    except FileNotFoundError:
+        # If file doesn't exist, then create it.
+        json_file = open(output,"a+")
+        with open(output,"a+") as json_file:
+            json.dump(mydict, json_file, indent=4)
+            json_file.write('\n')
+            json_file.close()
+    else:
+        # Load current results.
+        json_file = open(output).read()
+        results = json.loads(json_file)
+        # Update.
+        results.update(mydict)
+        # Write to file.
+        json_file = open(output,"w+")
+        json.dump(results, json_file, indent=4)
+        json_file.write('\n')
+        json_file.close()
+# EOF
+

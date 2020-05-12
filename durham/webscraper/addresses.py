@@ -26,7 +26,7 @@ def load_addresses(addr_data):
 
 class durham:
     ''' Simple class that contains list of addresses. '''
-    addr_list = load_addresses(config.DURHAM_ADDR)
+    addr_list = load_addresses(config.ADDR_DATA)
     def random():
         i = randrange(len(durham.addr_list))
         address = durham.addr_list.pop(i)
