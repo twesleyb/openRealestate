@@ -59,7 +59,7 @@ def safety(fun):
         try:
            return fun(*args)
         except Exception as e:
-            print(e,file=sys.stderr)
+            #print(e,file=sys.stderr)
             return None
     return wrapper
 
