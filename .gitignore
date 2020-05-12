@@ -23,4 +23,8 @@ extensions/
 # Log files.
 *.log
 
+# Ingore pycache
 __pycache__/
+
+# Data is too big.
+durham/data
