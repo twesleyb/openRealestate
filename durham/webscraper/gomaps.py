@@ -80,8 +80,8 @@ def find_address(driver,address):
     button.click()
     utils.zzz()
     # Build a query.  
-    addr_str = address.get('NUMBER') + ' ' + address.get('STREET')
-    keys={"address":addr_str,"zip":address.get('POSTCODE')}
+    addr_str = ' '.join([address.get('NUMBER').strip(), address.get('STREET').strip()])
+    keys={"address":addr_str,"zip":address.get('POSTCODE').strip()}
     query = "SITE_ADDRE = '{address}' And OWZIPA = {zip}".format(**keys)
     # Add query.
     text_box = driver.find_element_by_id("queryBuilderQueryTextArea")
@@ -113,12 +113,12 @@ def add_buffer(driver, start, increase_by, n_max=1000):
         xpath = "//select[@name='activeLayersBuffer']/option[text()='Parcels']"
         drop_down = driver.find_element_by_xpath(xpath)
         drop_down.click()
-        utils.zzz(2)
+        utils.zzz(3)
         # Add buffer.
         el = driver.find_element_by_id('buferdistance')
         el.clear()
         el.send_keys(buffer_dist)
-        utils.zzz(2)
+        utils.zzz(3)
         # Submit.
         driver.find_element_by_id('buffersearchbtn').click()
         utils.zzz(2)

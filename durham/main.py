@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 ''' It's so easy. '''
 
-## FIXME: remove excessive spaces from results.
-## Remove extra spaces from input addresss - not common.
-# How to handle this error:
+# FIXME: remove excessive spaces from results.
+# FIXME: Remove extra spaces from input addresss - not common.
+# FIXME: How to handle this error:
 # invalid literal for int() with base 10: ''
 # occured at i = 123509 
+# FIXME: load errors and previously found results to speed things up.
 
 # Imports.
 import sys
