@@ -202,7 +202,7 @@ def append_results(mydict):
         results = json.loads(json_file)
         # Update.
         results.update(mydict)
-        print('Total number of results: {}.\n'.format(len(results)),file=sys.stderr)
+        print('Total number of results: {:,}.\n'.format(len(results)),file=sys.stderr)
         # Write to file.
         json_file = open(output,"w+")
         json.dump(results, json_file, indent=4)

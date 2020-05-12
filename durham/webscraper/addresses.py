@@ -72,7 +72,7 @@ def filter_addresses(addr_list):
     # Remove address from addr_list if it was already found.
     # This is pretty slow.
     print("Removing addresses that have already been found from addr_list.",
-            "This may take several minutes...", file=sys.stderr)
+            "This may take several minutes...\n", file=sys.stderr)
     found = [addr in found_keys for addr in addr_keys]
     remove = [i for i,j in enumerate(found) if j]
     addr_filt = [i for j, i in enumerate(addr_list) if j not in remove]
