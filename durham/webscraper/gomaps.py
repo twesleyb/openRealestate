@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+''' Functions for interacting with durham gomaps.'''
 
 import os
 import re
@@ -18,10 +19,11 @@ import json
 from pathlib import Path
 from importlib import import_module
 
+# Local imports.
 from . import utils
 from . import config
 
-
+# Launch a webdriver.
 def launch_gecko(gecko_path=config.DRIVER, profile_path=config.PROFILE, 
         url=config.GOMAPS, headless=False, log_path = '/dev/null'):
     ''' Launch geckodriver configured for webscraping.'''
@@ -45,12 +47,12 @@ def launch_gecko(gecko_path=config.DRIVER, profile_path=config.PROFILE,
     # If provided, navigate to webpage.
     if url is not None:
         driver.get(url)
-        print("Launched gecko at: {}".format(url),file=sys.stderr)
+        print("Launched gecko at: {}\n".format(url),file=sys.stderr)
 
     return(driver)
 #EOF
 
-
+# Wrapper to catch errors.
 def safety(fun):
     ''' A wrapper function that catches errors and returns None.'''
     def wrapper(*args):
@@ -61,7 +63,7 @@ def safety(fun):
             return None
     return wrapper
 
-
+# Search for an address.
 @safety
 def find_address(driver,address):
     '''Find an address on DurhamGOmaps.'''
@@ -95,7 +97,7 @@ def find_address(driver,address):
     return response
 #EOF
 
-
+# Buffer nearby parcels.
 def add_buffer(driver, start, increase_by, n_max=1000):
     ''' Add additional parcels to search result by adding nearby properties. '''
     # Initial number of results.
@@ -127,7 +129,7 @@ def add_buffer(driver, start, increase_by, n_max=1000):
     return 'Found {} result(s)'.format(n)
 # EOF
 
-
+# Download results, saved in root/downloads.
 def download_results(driver,refresh=True):
     ''' Download currently active results from gomaps. '''
     driver.find_element_by_id('exportToExcelbtn').click()
@@ -136,9 +138,10 @@ def download_results(driver,refresh=True):
         driver.refresh()
 # EOF
 
-
+# Load results from file into python.
 def load_results():
     ''' Load downloaded results (export.csv) into python. '''
+    ## FIXME: remove excess spaces from strings.
 
     # Load results.
     results = read_csv(config.EXPORT_CSV)
@@ -157,7 +160,7 @@ def load_results():
     return results
 # EOF
 
-
+# If an address is not found, append this to file.
 def append_errors(mydict):
     ''' Append a dictionary to json file.
     Requires:
@@ -177,7 +180,7 @@ def append_errors(mydict):
             json_file.close()
 # EOF
 
-
+# Append found addresses to file.
 def append_results(mydict):
     ''' Append a dictionary to json file.
     Requires:
@@ -199,10 +202,10 @@ def append_results(mydict):
         results = json.loads(json_file)
         # Update.
         results.update(mydict)
+        print('Total number of results: {}.\n'.format(len(results)),file=sys.stderr)
         # Write to file.
         json_file = open(output,"w+")
         json.dump(results, json_file, indent=4)
         json_file.write('\n')
         json_file.close()
 # EOF
-

@@ -37,14 +37,14 @@ while len(durham.addr_list) > 0:
     response = gomaps.find_address(driver,address)
     # Check response.
     if response is None:
-        print('... Address not found.', file = sys.stderr)
-        gomaps.append_errors(address,'STDERR')
+        print('... Address not found.\n', file = sys.stderr)
+        gomaps.append_errors(address)
         driver.refresh()
         utils.zzz(5)
         continue
     ## Add nearby parcels to results.
     print('Address found. Adding nearby parcels to results...',file=sys.stderr)
-    response = gomaps.add_buffer(driver,start=1500,increase_by=500)
+    response = gomaps.add_buffer(driver,start=2500,increase_by=500)
     ## Download results, and then load into python.
     gomaps.download_results(driver)
     results = gomaps.load_results()
@@ -53,3 +53,4 @@ while len(durham.addr_list) > 0:
     gomaps.append_results(results)
 # EOL
 
+# EOF
