@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-''' It's so easy. '''
+""" It's so easy. """
 
 # FIXME: remove address that have not been found from addr_list.
 # FIXME: How to handle this error:
 # invalid literal for int() with base 10: ''
-# occured at i = 123509 
+# occured at i = 123509
 
 # Imports.
 import sys
@@ -28,25 +28,31 @@ addr_filt = durham.filt(addr_list)
 while len(addr_filt) > 0:
     ## Get a random address.
     address = durham.random(addr_filt)
-    msg = ' '.join([address.get('NUMBER'), address.get('STREET'),
-        address.get('CITY'), address.get('POSTCODE')])
-    print('Searching for: {}...'.format(msg), file=sys.stderr)
+    msg = " ".join(
+        [
+            address.get("NUMBER"),
+            address.get("STREET"),
+            address.get("CITY"),
+            address.get("POSTCODE"),
+        ]
+    )
+    print("Searching for: {}...".format(msg), file=sys.stderr)
     # Search for address.
-    response = gomaps.find_address(driver,address)
+    response = gomaps.find_address(driver, address)
     # Check response.
     if response is None:
-        print('... Address not found.\n', file = sys.stderr)
+        print("... Address not found.\n", file=sys.stderr)
         gomaps.append_errors(address)
         driver.refresh()
         utils.zzz(5)
         continue
     ## Add nearby parcels to results.
-    print('Address found. Adding nearby parcels to results...',file=sys.stderr)
-    response = gomaps.add_buffer(driver,start=2500,increase_by=500)
+    print("Address found. Adding nearby parcels to results...", file=sys.stderr)
+    response = gomaps.add_buffer(driver, start=2500, increase_by=500)
     ## Download results, and then load into python.
     gomaps.download_results(driver)
     results = gomaps.load_results()
     ## Update results.
-    print('Updating results.\n',file=sys.stderr)
+    print("Updating results.\n", file=sys.stderr)
     gomaps.append_results(results)
 # EOL

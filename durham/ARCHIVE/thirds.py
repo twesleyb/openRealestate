@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-''' It's so easy. '''
+""" It's so easy. """
 
 from selenium import webdriver
 from selenium.webdriver import FirefoxProfile
@@ -9,7 +9,8 @@ from random import randrange
 
 # Additional imports
 from utils.zzz import *
-#from scrape.launch_gecko import *
+
+# from scrape.launch_gecko import *
 from scrape.load_durham_addresses import *
 from scrape.find_address import *
 
@@ -31,18 +32,18 @@ from scrape.find_address import *
 # If we just update handlers, is that enough?
 
 ## Input parameters:
-# NOTE: Firefox executable needs to be in the same directory as geckodriver, 
+# NOTE: Firefox executable needs to be in the same directory as geckodriver,
 # or set as en environmental variable. (Is it set on Windows side?)
-gecko_driver = '/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe'
-#output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
-#output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
+gecko_driver = "/mnt/c/Program Files/Mozilla Firefox/geckodriver.exe"
+# output_json = '/home/twesleyb/open-realestate/data/durham-realestate.json'
+# output_err = '/home/twesleyb/open-realestate/data/durham-not-found.json'
 
 ## DEFAULTS:
-firefox_profile = '/home/twesleyb/projects/open-realestate/firefox-profile/'
-addr_data = '/home/twesleyb/projects/open-realestate/data/durham.csv'
+firefox_profile = "/home/twesleyb/projects/open-realestate/firefox-profile/"
+addr_data = "/home/twesleyb/projects/open-realestate/data/durham.csv"
 
 ## Create firefox profile.
-# NOTE: (1) Calls to FirefoxProfile() create a temporary firefox profile, 
+# NOTE: (1) Calls to FirefoxProfile() create a temporary firefox profile,
 # which is saved in /tmp/. e.g.: /tmpt/tmpizzfipxs
 # You can see its path with: profile.path
 # NOTE: (2) You can pass a path to FirefoxProfile().
@@ -53,15 +54,18 @@ addr_data = '/home/twesleyb/projects/open-realestate/data/durham.csv'
 # The driver will inherit any settings set in this directory.
 profile = FirefoxProfile(firefox_profile)
 
-launch_gecko(gecko_path,firefox_profile=profile,url=gomaps,headless=True)
+launch_gecko(gecko_path, firefox_profile=profile, url=gomaps, headless=True)
 
 ## Create webdriver.
-driver = webdriver.Firefox(executable_path=gecko_driver,
-    options=options,firefox_profile=profile,
-    service_log_path = '/dev/null') # Supress output logs.
+driver = webdriver.Firefox(
+    executable_path=gecko_driver,
+    options=options,
+    firefox_profile=profile,
+    service_log_path="/dev/null",
+)  # Supress output logs.
 
 ## Navigate to durham gomaps
-gomaps = 'http://maps2.roktech.net/durhamnc_gomaps4/'
+gomaps = "http://maps2.roktech.net/durhamnc_gomaps4/"
 driver.get(gomaps)
 
 ## Load address list.
@@ -72,16 +76,15 @@ i = randrange(len(addr_list))
 address = addr_list[i]
 
 # Search for address.
-response = find_address(driver,address)
+response = find_address(driver, address)
 
 # Check response.
 print(response)
 
 # Increase buffer distance.
-#add_buffer(driver,buffer_dist=1000)
+# add_buffer(driver,buffer_dist=1000)
 
 # Download results.
-driver.find_element_by_id('exportToExcelbtn').click()
+driver.find_element_by_id("exportToExcelbtn").click()
 
 # Parse results.
-
