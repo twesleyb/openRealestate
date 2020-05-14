@@ -1,0 +1,46 @@
+,153334,153332
+OBJECTID,233101421,233101621
+PARCEL_ID,153334,153332
+PIN,0728-04-60-2173,0727-02-89-2847
+FRONT_DIM,,
+POLY_ACRE,,
+SUM_ACRE,0.009000000000000001,0.013999999999999999
+OLD_ID,539 -05-001A-,539 -04-011 -
+USERINT,,
+CITY_CODE,      ,      
+ACCT_,8486545,34443
+OWNAM1,JAMAAT IBAD AR-RAHMAN INC     ,DURHAM PUBLIC SCHOOLS BOARD   
+OWNAM2,                              ,OF EDUCATION                  
+OWNAM3,                              ,ATTN LARRY UMSTEAD            
+OWADR1,5000 REVERE RD                ,PO BOX 2246                   
+OWADR2,                              ,                              
+OWADR3,                              ,                              
+OWADR4,                              ,                              
+OWCITY,DURHAM                   ,DURHAM                   
+OWSTA,NC,NC
+OWZIPA,27713     ,27702     
+DIST_CODE,1,1
+SplitTaxDis,     ,     
+SplitTaxDec,                         ,                         
+LAND_USE,317,360
+LANDUSE_DESC,VAC RES/ HOMEOWNERS ASSOC,VACANT COMMUNITY SERVICE 
+NBR_CLASS,     ,     
+NBR_CODE,C727A,R727G
+EXEMPT_CODE,0400,0100
+LAND_VALUE,1,380
+BLDG_VALUE,0,0
+TOTAL_VALU,1,380
+DEED_BOOK,006411,001794
+DEED_PAGE,635,233
+PLAT_BOOK,000066,000000
+PLAT_PAGE,74,0
+DATE_SOLD,20100129,19970101
+SALE_PRICE,0,0
+SUBD_ID,0000 ,0000 
+SUBD_DESC,N/A - NO SUBDIVISION     ,N/A - NO SUBDIVISION     
+OWNER_NAME,JAMAAT IBAD AR-RAHMAN INC                                                                           ,DURHAM PUBLIC SCHOOLS BOARD OF EDUCATION ATTN LARRY UMSTEAD                                         
+OWNER_ADDR,5000 REVERE RD                                                                                      ,PO BOX 2246                                                                                         
+CLASS_CODE, C727A     , R727G     
+SITE_ADDRE,5000 REVERE RD                                                                  ,1500 CLERMONT RD                                                                
+Shape.area,401.03625,624.95265
+Shape.len,80.30814513028874,99.98590968485122
