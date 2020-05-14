@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Functions for working with Durham addresses. """
 
+import re
 import sys
 import json
 
@@ -17,13 +18,21 @@ def isstr(val):
     """
     return isinstance(val, str)
 
+# Simple function to remove excess whitespace from a string.
+def clean_str(string):
+    """ Example:
+        >>> In [1]: clean_str('   the  fat     cat  sat   in the hat      ')
+        >>> Out[1]: 'the fat cat sat in the hat'
+    """
+    string = re.sub(' +', ' ',string)
+    return string.strip()
 
 # Simple function to strip excess whitespace from dict values.
-# FIXME: remove excess spaces within strings!
 def clean_dict(mydict):
     """ Strip whitespace from dictionary strings. """
     keys = list(mydict.keys())
-    vals = [val.strip() if isstr(val) else val for val in mydict.values()]
+    #vals = [val.strip() if isstr(val) else val for val in mydict.values()]
+    vals = [clean_str(val)  if isstr(val) else val for val in mydict.values()]
     return dict(zip(keys, vals))
 
 

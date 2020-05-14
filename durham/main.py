@@ -21,6 +21,7 @@ driver = gomaps.launch_gecko(headless=True)
 durham = addresses.durham
 
 ## Get filtered addresses.
+# FIXME: handle error if no stdout.json exists!
 addr_list = durham.addr_list
 addr_filt = durham.filt(addr_list)
 
