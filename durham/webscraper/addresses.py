@@ -19,6 +19,7 @@ def isstr(val):
 
 
 # Simple function to strip excess whitespace from dict values.
+# FIXME: remove excess spaces within strings!
 def clean_dict(mydict):
     """ Strip whitespace from dictionary strings. """
     keys = list(mydict.keys())
