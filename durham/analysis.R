@@ -1,15 +1,16 @@
 #!/usr/bin/env Rscript
 
-library(dplyr)
-library(data.table)
-
-## Input Arguments.
-input_data = "durham-realestate.csv"
-
 # Load renv.
 renv::load(getrd()) # NOTE: getrd() is an alias in my .Rprofile.
 # Alternatively, you can use:
 #renv::load("your/path/to/open-realestate/")
+
+library(dplyr)
+library(data.table)
+library(tidygeocoder)
+
+## Input Arguments.
+input_data = "durham-realestate.csv"
 
 # Path to durham realestate data.
 here <- getwd()
@@ -47,4 +48,14 @@ median(subdt$DUR_OWN,na.rm=TRUE)
 
 
 
+# Convert addresses to lat/lon.
+# To install needed: libudunits2-dev.
+# $ sudo apt-get install libudunits2-dev
+
+# Complete addresses:
+colnames(subdt)
+address <- paste(subdt$street,subdt$city,subdt$zip)
+
+subdt %>% geocode(.tbl, address, method = "census", lat = lat, long = long, ...)
+geocode(.tbl, address, method = "census", lat = lat, long = long, ...)
 
