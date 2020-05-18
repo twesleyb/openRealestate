@@ -1,1 +1,1 @@
-/home/twesleyb/dotfiles/.Rprofile
+/home/twesleyb/.Rprofile

@@ -1,0 +1,50 @@
+# https://property.spatialest.com/nc/durham/#/property/{160924}
+^ can get details like year built and other details about the home
+# 160924 is the parcel ID!
+
+## Notes on data scraped from gomaps:
+OBJECTID - not sure, unique id for gomaps?
+PARCEL_ID - unique identifier for a piece of property
+PIN - not sure
+FRONT_DIM - NA -- remove
+POLY_ACRE - NA -- remove
+SUM_ACRE - total acreage of a parcel - matches zillow number
+OLD_ID - not sure
+USERINT - NA - remove
+CITY_CODE - NA - remove
+ACCT_ - not sure
+OWNAM1 - first owners name
+OWNAM2 ...
+OWNAM3
+OWADR1 owners address, can differ from site address
+OWADR2
+OWADR3
+OWADR4
+OWCITY owner city
+OWSTA owner state
+OWZIPA owner zip
+DIST_CODE - not sure, all entries are == 1
+SplitTaxDis - NA remove
+SplitTaxDec - NA remove
+LAND_USE - id for landuse_desc
+LANDUSE_DESC - description of land use
+NBR_CLASS - all empty
+NBR_CODE - not sure - only two unique valuse R842B and R842A
+EXEMPT_CODE - nor sure, only a couple of unique values: HOA 1710 1320 1310
+LAND_VALUE
+BLDG_VALUE
+TOTAL_VALU
+DEED_BOOK
+DEED_PAGE
+PLAT_BOOK
+PLAT_PAGE
+DATE_SOLD
+SALE_PRICE
+SUBD_ID
+SUBD_DESC
+OWNER_NAME
+OWNER_ADDR
+CLASS_CODE
+SITE_ADDRE
+Shape.area
+Shape.len
