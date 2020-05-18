@@ -9,4 +9,4 @@ renv::load(root)
 
 # Update package documentation.
 # # NOTE: Assumes that you are somewhere in root/ ..
-#devtools::document()
+devtools::document()
