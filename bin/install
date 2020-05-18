@@ -6,7 +6,7 @@ renv::load(root)
 
 # Input arguments.
 git_user <- "twesleyb"
-package_name <- "open-realestate"
+package_name <- "openRealestate"
 
 # Check if package is installed.
 package <- file.path(git_user,package_name)
