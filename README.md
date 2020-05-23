@@ -1,4 +1,3 @@
 # OpenRealestate
-_Take back your data._
 
-It's not easy.
+Durham realestate data from [gomaps](http://maps2.roktech.net/durhamnc_gomaps4/).
