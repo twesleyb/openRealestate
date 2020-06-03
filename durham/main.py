@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" It's so easy. """
+""" This scrapes address data from durham gomaps. """
 
 # FIXME: remove address that have not been found from addr_list.
 # FIXME: How to handle this error:
@@ -14,20 +14,21 @@ from webscraper import utils
 from webscraper import gomaps
 from webscraper import addresses
 
-## Create webdriver.
+# Create webdriver.
 driver = gomaps.launch_gecko(headless=True)
 
-## Load address list class.
+# Load address list class.
 durham = addresses.durham
 
-## Get filtered addresses.
-# FIXME: handle error if no stdout.json exists!
+# Get filtered addresses.
+# FIXME: handle error which will probably arise if no stdout.json exists!
 addr_list = durham.addr_list
 addr_filt = durham.filt(addr_list)
 
-## Loop to do the work:
+# Loop to do the work:
 while len(addr_filt) > 0:
-    ## Get a random address.
+
+    # Get a random address.
     address = durham.random(addr_filt)
     msg = " ".join(
         [
@@ -38,8 +39,10 @@ while len(addr_filt) > 0:
         ]
     )
     print("Searching for: {}...".format(msg), file=sys.stderr)
+
     # Search for address.
     response = gomaps.find_address(driver, address)
+
     # Check response.
     if response is None:
         print("... Address not found.\n", file=sys.stderr)
@@ -47,13 +50,16 @@ while len(addr_filt) > 0:
         driver.refresh()
         utils.zzz(5)
         continue
-    ## Add nearby parcels to results.
+
+    # Add nearby parcels to results.
     print("Address found. Adding nearby parcels to results...", file=sys.stderr)
     response = gomaps.add_buffer(driver, start=2500, increase_by=500)
-    ## Download results, and then load into python.
+
+    # Download results, and then load into python.
     gomaps.download_results(driver)
     results = gomaps.load_results()
-    ## Update results.
+
+    # Update results.
     print("Updating results.\n", file=sys.stderr)
     gomaps.append_results(results)
 # EOL
