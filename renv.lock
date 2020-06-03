@@ -37,6 +37,7 @@
       "Repository": "CRAN",
       "Hash": "e652f23d8b1807cc975c51410d05b72f"
     },
+<<<<<<< HEAD
     "XML": {
       "Package": "XML",
       "Version": "3.99-0.3",
@@ -50,6 +51,19 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "e8a22846fff485f0be3770c2da758713"
+=======
+    "TBmiscr": {
+      "Package": "TBmiscr",
+      "Version": "0.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "twesleyb",
+      "RemoteRepo": "TBmiscr",
+      "RemoteRef": "master",
+      "RemoteSha": "e596fff925867fd11e6731c2bb63342ca7aa77e0",
+      "Hash": "9049d1a437e9afeff11f97ab1772a868"
+>>>>>>> 1de70d35d6bcf8d017036cef6969e870dc07bc87
     },
     "assertthat": {
       "Package": "assertthat",
