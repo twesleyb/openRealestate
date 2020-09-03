@@ -5,6 +5,7 @@
 *.swo
 
 # Ignore renv.
+renv/
 renv/library
 renv/stagging
 
