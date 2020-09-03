@@ -1,79 +1,101 @@
 #!/usr/bin/env Rscript
 
-# OPTIONS ---------------------------------------------------------------------
+## OPTIONS ------------------------------------------------------------
 
-# the project's root directory:
-root = getwd() # its assumed that this script is in the projects root dir
+# everything is relative to projects root directory
+root = "~/projects/openRealestate"
 
-# project dependencies:
-imports = c("data.table","dplyr")
+## utility functions --------------------------------------------------
+# functions that do all the work
 
-# load renv -------------------------------------------------------------------
-
-if (!dir.exists(file.path(root,"renv"))) {
-} else {
-	renv::load(root,quiet=TRUE)
+load_imports <- function(imports=NULL) {
+	# wrapper around R::library
+	import <- function(lib) {
+		suppressPackageStartupMessages(library(lib))
+	}
+	do.call(import,as.list(imports))
 }
 
-# utility functions ------------------------------------------------------------
 
-str_within_paren <- function(string) { 
+is_installed <- function(package) {
+	# check if a package is installed
+	installed <- rownames(installed.packages())
+	return(package %in% installed)
+}
+
+
+load_renv <- function(root=getwd(),quiet=TRUE) {
+	# load renv given path to project root dir containing renv/
+	if (!dir.exists(file.path(root,"renv"))) {
+		# renv does not exist
+		if (!is_installed("renv")) {
+			stop(paste("renv is not installed.\n",
+				   "Please install renv",
+				   "to manage R dependencies.")) }
+	} else {
+		renv::load(project=root,...)
+	}
+}
+
+
+str_within_paren <- function(string) {
 	# extract strings from within parentheses, e.g.
 	# > str_within_paren("foo (bar) man (biz)")
 	# [1] "bar" "biz"
-	regex = "(?<=\\().*?(?=\\))"
-	matches <- regmatches(string, gregexpr(regex, string, perl=T))[[1]]
+	re = "(?<=\\().*?(?=\\))"
+	matches <- regmatches(string, gregexpr(re, string, perl=T))[[1]]
 	return(matches)
 }
 
-load_imports <- function(imports=NULL) {
-	# load imports
-	do.call(library,as.list(imports))
-}
 
-load_namespace <- function(myfile="NAMESPACE") {
+load_namespace <- function(root, myfile="NAMESPACE") {
+	# load imports delclared in NAMESPACE file
 	namespace <- readLines(myfile)
 	imports <- str_within_paren(paste(namespace,collapse=" "))
-	if (length(imports) == 0) { 
-		warning("There are no imports declared in NAMESPACE." ) 
+	if (length(imports) == 0) {
+	#	warning("There are no imports declared in NAMESPACE." )
 	} else {
 		do.call(library,as.list(imports))
 	}
 }
 
-load_namespace()
-
-load_project <- function(root = getwd, "data" = TRUE, "R" = TRUE) {
-	# load project's functions and data from the R/ and data/ directories
+load_project <- function(root=getwd(),
+			 datadir = file.path(root,"data"),
+			 funcdir = file.path(root,"R"),
+			 quiet = TRUE) {
+	# load project's functions and data from the R/ and data/ dirs
 	# NOTE: only loads .rda and .R files
-	#
-	data_files <- list.files(file.path(root,"data"),pattern=".rda") 
-	R_files <- list.files(file.path(root,"R"),pattern=".R")
+	data_files <- list.files(datadir, pattern=".rda")
+	R_files <- list.files(funcdir, pattern=".R")
 	#
 	for (dfile in data_files) {
-		message(paste("loaded dataset:",tools::file_path_sans_ext(dfile)))
+		if (!quiet) {
+			message(paste("Loaded dataset:",
+				      tools::file_path_sans_ext(dfile)))
+		}
 		load(file = file.path(root,"data",dfile))
 	}
 	#
 	if (length(R_files) > 0) {
-		message(paste("Importing functions from:",file.path(root,"R")))
+		message(paste("Importing functions from:",
+			      file.path(root,"R")))
 		for (Rfile in R_files) {
 			source(file = file.path(root,"data",Rfile))
 		}
 	}
 }
 
-# main ------------------------------------------------------------------------
 
-main <- function() {
+# main --------------------------------------------------------------
 
-	.env <- new.env()
+.env <- new.env()
 
-	load_renv()    # load reproducible R environment
+load_renv(root)      # load reproducible R environment
 
-	load_project() # load functions (R/) and data (data/)
+load_project(root)   # load functions (R/) and data (data/)
 
-	load_imports() # load any dependencies declared in NAMESPACE
+load_namespace(root) # load any dependencies declared in NAMESPACE
 
-	return attach(.env,warn.conflicts=FALSE)
-}
+# attach these imports to an environment which is loaded by
+# source("config.R")
+attach(.env,warn.conflicts=FALSE)
