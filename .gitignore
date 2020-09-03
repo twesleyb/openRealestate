@@ -27,8 +27,17 @@ extensions/
 # Ingore pycache
 __pycache__/
 
-# Data is too big.
+# data is too big
 durham/data/
 
 # Achived files
 ARCHIVE/
+
+# downloaded files
+downloads/
+
+# src files
+src/
+
+# local bin
+bin/

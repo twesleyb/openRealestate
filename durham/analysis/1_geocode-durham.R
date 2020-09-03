@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 
-# 1. loads the data saved as csv from python.
+# Geocode Durham's addresses.
+# 1. loads the address data saved as csv from python webscraping script.
 # 2. save the data as an rda object in openRealestate/data.
 # 3. geocode addresses with twesleyb/tidygeocoder.
 # 4. save the data as rda.

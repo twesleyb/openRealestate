@@ -31,9 +31,9 @@ LANDUSE_DESC - description of land use
 NBR_CLASS - all empty
 NBR_CODE - not sure - only two unique valuse R842B and R842A
 EXEMPT_CODE - nor sure, only a couple of unique values: HOA 1710 1320 1310
-LAND_VALUE
-BLDG_VALUE
-TOTAL_VALU
+LAND_VALUE # HOW MUCH
+BLDG_VALUE # HOW MUCH
+TOTAL_VALU # HOW MUCH
 DEED_BOOK
 DEED_PAGE
 PLAT_BOOK
